@@ -1,4 +1,6 @@
-import React from "react";
+
+'use client';
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -19,7 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
-const dummyAppointments: Appointment[] = [
+const dummyAppointmentsData: Appointment[] = [
     {
         patient: { name: "John Doe", image: Doctors[0].image },
         schedule: new Date().toISOString(),
@@ -63,6 +65,14 @@ const dummyAppointments: Appointment[] = [
 ];
 
 const DataTable = () => {
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setAppointments(dummyAppointmentsData);
+    setIsClient(true);
+  }, []);
+
   return (
     <div className="data-table">
       <Table>
@@ -76,7 +86,7 @@ const DataTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {dummyAppointments.map((appointment) => (
+          {appointments.map((appointment) => (
             <TableRow key={appointment.userId}>
               <TableCell>
                 <div className="flex items-center gap-3">
@@ -94,11 +104,17 @@ const DataTable = () => {
                 <StatusBadge status={appointment.status as Status} />
               </TableCell>
               <TableCell>
-                <p>
-                  {new Date(appointment.schedule).toLocaleDateString()} -{" "}
-                  {new Date(appointment.schedule).toLocaleTimeString()}
-                </p>
-                <p className="text-12-regular text-dark-700">{appointment.reason}</p>
+                {isClient ? (
+                  <>
+                    <p>
+                      {new Date(appointment.schedule).toLocaleDateString()} -{" "}
+                      {new Date(appointment.schedule).toLocaleTimeString()}
+                    </p>
+                    <p className="text-12-regular text-dark-700">{appointment.reason}</p>
+                  </>
+                ) : (
+                  <p>Loading...</p>
+                )}
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-3">
