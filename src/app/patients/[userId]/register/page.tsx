@@ -28,7 +28,7 @@ const Register = ({ params: { userId } }: { params: { userId: string } }) => {
         <Image
           src={registerImage.imageUrl}
           height={1000}
-          width={390}
+          width={1000}
           alt={registerImage.description}
           data-ai-hint={registerImage.imageHint}
           className="side-img max-w-[390px]"

@@ -167,7 +167,7 @@ export default function AddUserPage() {
       </Card>
 
       <AlertDialog open={isCameraOpen} onOpenChange={setIsCameraOpen}>
-        <AlertDialogContent className="max-w-2xl">
+        <AlertDialogContent className="max-w-2xl w-[90vw] md:w-full">
           <AlertDialogHeader>
             <AlertDialogTitle>Scan National ID</AlertDialogTitle>
           </AlertDialogHeader>
