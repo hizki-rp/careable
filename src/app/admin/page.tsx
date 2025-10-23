@@ -23,7 +23,7 @@ const AdminPage = async () => {
         <section>
           <h1 className="header">Welcome 👋</h1>
           <p className="text-dark-700">
-            Start the day with managing new appointments
+            Start the day with managing your clinic&apos;s performance.
           </p>
         </section>
         <section className="admin-stat">
@@ -38,6 +38,18 @@ const AdminPage = async () => {
             count={30}
             label="Pending appointments"
             icon="/assets/icons/pending.svg"
+          />
+           <StatCard
+            type="lab"
+            count={45}
+            label="Laboratory Tests"
+            icon="/assets/icons/lab.svg"
+          />
+           <StatCard
+            type="discharged"
+            count={250}
+            label="Discharged Patients"
+            icon="/assets/icons/discharged.svg"
           />
           <StatCard
             type="cancelled"

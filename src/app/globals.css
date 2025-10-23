@@ -109,6 +109,28 @@
   .file-uploader {
     @apply flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-card;
   }
+  .stat-card {
+    @apply flex flex-col gap-y-3 rounded-xl p-4;
+  }
+  
+  .bg-appointments {
+    background-color: #7ce0c3; /* A lighter, soothing green */
+  }
+
+  .bg-pending {
+    background-color: #8ab7ff; /* A softer, friendly blue */
+  }
+
+  .bg-cancelled {
+    background-color: #ff9a9a; /* A less jarring red */
+  }
+
+  .bg-lab {
+    background-color: #f0c47b; /* A warm, inviting orange */
+  }
+  .bg-discharged {
+    background-color: #b2aaff; /* A calming purple */
+  }
 }
 
 @layer utilities {

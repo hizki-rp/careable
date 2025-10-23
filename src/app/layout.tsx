@@ -3,7 +3,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import Link from "next/link";
-import { Sidebar, SidebarContent, SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Home, User, UserPlus, LayoutDashboard, ListOrdered } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
 import { PatientQueueProvider } from "@/context/PatientQueueContext";
@@ -54,6 +54,10 @@ export default function RootLayout({
                   </SidebarContent>
               </Sidebar>
               <SidebarInset>
+                <header className="p-4 flex items-center justify-between md:hidden sticky top-0 bg-background z-10 border-b">
+                    <Link href="/" className="font-bold text-lg text-primary">CarePulse</Link>
+                    <SidebarTrigger />
+                </header>
                 {children}
               </SidebarInset>
             </SidebarProvider>
