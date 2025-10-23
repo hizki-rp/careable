@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import Link from "next/link";
 import { Sidebar, SidebarContent, SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Home, User, UserPlus, LayoutDashboard, CalendarPlus } from "lucide-react";
+import { Home, User, UserPlus, LayoutDashboard, CalendarPlus, ListOrdered } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
@@ -48,6 +48,7 @@ export default function RootLayout({
                     <Link href="/patients/user1/register" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><UserPlus size={20} /><span>Register</span></Link>
                     <Link href="/patients/user1/new-appointment" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><CalendarPlus size={20} /><span>New Appointment</span></Link>
                     <Link href="/reception/add-user" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><UserPlus size={20} /><span>Add Patient</span></Link>
+                    <Link href="/reception/queue" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><ListOrdered size={20} /><span>Patient Queue</span></Link>
                   </nav>
                 </SidebarContent>
             </Sidebar>
