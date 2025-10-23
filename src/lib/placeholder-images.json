@@ -1,3 +1,46 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "onboarding-img",
+      "description": "Patient smiling",
+      "imageUrl": "https://images.unsplash.com/photo-1584515933487-779824d29309?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxkb2N0b3IlMjBwYXRpZW50fGVufDB8fHx8MTc2MTIxMjc2OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor patient"
+    },
+    {
+      "id": "register-img",
+      "description": "Doctor registering a patient",
+      "imageUrl": "https://images.unsplash.com/photo-1750491847558-5c1dfddcc125?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxkb2N0b3IlMjByZWdpc3RyYXRpb258ZW58MHx8fHwxNzYxMjI0NTA3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor registration"
+    },
+    {
+      "id": "appointment-img",
+      "description": "Doctor with a clipboard",
+      "imageUrl": "https://images.unsplash.com/photo-1659353888477-6e6aab941b55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkb2N0b3IlMjBjbGlwYm9hcmR8ZW58MHx8fHwxNzYxMjI0NTA3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor clipboard"
+    },
+    {
+      "id": "success-gif",
+      "description": "Animated success checkmark",
+      "imageUrl": "https://images.unsplash.com/photo-1687787416048-d7acdd89bfc3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzdWNjZXNzJTIwY2hlY2ttYXJrfGVufDB8fHx8MTc2MTIyNDUwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "success checkmark"
+    },
+    {
+      "id": "dr-alcantara",
+      "description": "Dr. John Alcantara",
+      "imageUrl": "https://images.unsplash.com/photo-1642541724244-83d49288a86b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkb2N0b3IlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjExODg0NjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor portrait"
+    },
+    {
+      "id": "dr-lee",
+      "description": "Dr. Sarah Lee",
+      "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkb2N0b3IlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjExODg0NjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor portrait"
+    },
+    {
+      "id": "dr-williams",
+      "description": "Dr. David Williams",
+      "imageUrl": "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxkb2N0b3IlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjExODg0NjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor portrait"
+    }
+  ]
 }

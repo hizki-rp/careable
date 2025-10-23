@@ -8,13 +8,37 @@ export default {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['Plus Jakarta Sans', 'sans-serif'],
+        headline: ['Plus Jakarta Sans', 'sans-serif'],
         code: ['monospace'],
+        sans: ["var(--font-sans)", "sans-serif"],
       },
       colors: {
+        dark: {
+          300: "#1C1F2E",
+          400: "#252836",
+          500: "#2F3244",
+          600: "#424656",
+          700: "#55596A",
+        },
+        green: {
+          500: "#24AE7C",
+        },
+        blue: {
+          500: "#3A8DFF",
+        },
+        orange: {
+          500: "#FFA500",
+        },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -66,6 +90,23 @@ export default {
           ring: 'hsl(var(--sidebar-ring))',
         },
       },
+      fontSize: {
+        "10": "10px",
+        "12": "12px",
+        "14": "14px",
+        "16": "16px",
+        "18": "18px",
+        "20": "20px",
+        "24": "24px",
+        "30": "30px",
+        "36": "36px",
+      },
+      fontWeight: {
+        normal: "400",
+        medium: "500",
+        semibold: "600",
+        bold: "700",
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -88,10 +129,35 @@ export default {
             height: '0',
           },
         },
+        "modal-in": {
+          from: {
+            opacity: "0",
+            transform: "translate(-50%, -48%) scale(0.96)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translate(-50%, -50%) scale(1)",
+          },
+        },
+        "modal-out": {
+          from: {
+            opacity: "1",
+            transform: "translate(-50%, -50%) scale(1)",
+          },
+          to: {
+            opacity: "0",
+            transform: "translate(-50%, -48%) scale(0.96)",
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        "modal-in": "modal-in 0.2s ease-out",
+        "modal-out": "modal-out 0.2s ease-in",
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       },
     },
   },
