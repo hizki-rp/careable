@@ -6,126 +6,164 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { ArrowRight, ChevronRight, User } from 'lucide-react';
+import { ArrowRight, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-type QueueStage = 'triage' | 'lab' | 'consultation' | 'done';
-type PatientStatus = 'waiting' | 'in-progress' | 'completed';
+type QueueStage = 'Waiting Room' | 'Questioning' | 'Laboratory Test' | 'Results by Doctor';
 
 interface Patient {
-  id: number;
+  id: string;
   name: string;
-  avatar: string;
   stage: QueueStage;
-  status: PatientStatus;
-  waitingSince: Date;
+  checkInTime: Date;
 }
 
-const dummyPatients: Patient[] = [
-  { id: 1, name: "Maria Garcia", avatar: "https://i.pravatar.cc/150?img=1", stage: 'triage', status: 'in-progress', waitingSince: new Date(Date.now() - 5 * 60000) },
-  { id: 2, name: "John Smith", avatar: "https://i.pravatar.cc/150?img=2", stage: 'triage', status: 'waiting', waitingSince: new Date(Date.now() - 2 * 60000) },
-  { id: 3, name: "Chen Wei", avatar: "https://i.pravatar.cc/150?img=3", stage: 'lab', status: 'in-progress', waitingSince: new Date(Date.now() - 15 * 60000) },
-  { id: 4, name: "Fatima Al-Fassi", avatar: "https://i.pravatar.cc/150?img=4", stage: 'consultation', status: 'waiting', waitingSince: new Date(Date.now() - 8 * 60000) },
-  { id: 5, name: "David Miller", avatar: "https://i.pravatar.cc/150?img=5", stage: 'lab', status: 'waiting', waitingSince: new Date(Date.now() - 3 * 60000) },
-  { id: 6, name: "Anya Petrova", avatar: "https://i.pravatar.cc/150?img=6", stage: 'consultation', status: 'in-progress', waitingSince: new Date(Date.now() - 25 * 60000) },
-];
+const STAGES: QueueStage[] = ['Waiting Room', 'Questioning', 'Laboratory Test', 'Results by Doctor'];
 
-const STAGE_TITLES: Record<QueueStage, string> = {
-  triage: 'Triage / Questioning',
-  lab: 'Laboratory Tests',
-  consultation: 'Doctor Consultation',
-  done: 'Completed'
-};
+const CheckInForm = ({ onCheckIn }: { onCheckIn: (name: string) => void }) => {
+  const [name, setName] = useState('');
 
-const STAGES: QueueStage[] = ['triage', 'lab', 'consultation'];
-
-const PatientCard = ({ patient, onMove }: { patient: Patient; onMove: (id: number, nextStage: QueueStage) => void }) => {
-  const getWaitingTime = (since: Date) => {
-    const minutes = Math.floor((Date.now() - since.getTime()) / 60000);
-    return `${minutes} min ago`;
-  }
-  
-  const currentStageIndex = STAGES.indexOf(patient.stage);
-  const nextStage = currentStageIndex + 1 < STAGES.length ? STAGES[currentStageIndex + 1] : 'done';
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (name.trim()) {
+      onCheckIn(name.trim());
+      setName('');
+    }
+  };
 
   return (
-    <Card className="mb-4">
-      <CardContent className="p-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-            <User className="text-muted-foreground" />
+    <Card className="mb-8">
+        <CardHeader>
+            <CardTitle>Patient Check-In</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-end gap-4">
+                <div className="w-full sm:w-auto flex-grow space-y-2">
+                    <Label htmlFor="patient-name">Patient Name</Label>
+                    <Input
+                        id="patient-name"
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Enter patient's full name"
+                        required
+                    />
+                </div>
+                <Button type="submit" className="w-full sm:w-auto">Check In</Button>
+            </form>
+        </CardContent>
+    </Card>
+  );
+};
+
+
+const PatientCard = ({ patient, onMove }: { patient: Patient; onMove: (patientId: string, nextStage: QueueStage | 'Discharge') => void }) => {
+  const currentStageIndex = STAGES.indexOf(patient.stage);
+  const nextStage = currentStageIndex + 1 < STAGES.length ? STAGES[currentStageIndex + 1] : 'Discharge';
+
+  const getActionButtonText = () => {
+    switch (patient.stage) {
+      case 'Waiting Room':
+        return 'Start Questioning';
+      case 'Questioning':
+        return 'Send to Lab';
+      case 'Laboratory Test':
+        return 'Results Ready';
+      case 'Results by Doctor':
+        return 'Discharge Patient';
+    }
+  };
+  
+  const handleMove = () => {
+    onMove(patient.id, nextStage);
+  }
+
+  return (
+    <Card className="mb-4 bg-card">
+      <CardContent className="p-4 flex flex-col items-start gap-4">
+        <div className="flex items-center gap-4 w-full">
+          <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center shrink-0">
+            <User className="text-muted-foreground" size={20} />
           </div>
-          <div>
+          <div className="flex-grow">
             <p className="font-semibold">{patient.name}</p>
-            <p className="text-sm text-muted-foreground">
-              {patient.status === 'in-progress' ? 'In Progress' : `Waiting since ${getWaitingTime(patient.waitingSince)}`}
-            </p>
+            <p className="text-sm text-muted-foreground">ID: {patient.id}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" onClick={() => onMove(patient.id, nextStage)}>
-                Move to {STAGE_TITLES[nextStage]} <ArrowRight className="ml-2 h-4 w-4"/>
-            </Button>
-        </div>
+        <Button size="sm" variant="outline" onClick={handleMove} className="w-full">
+            {getActionButtonText()} <ArrowRight className="ml-2 h-4 w-4"/>
+        </Button>
       </CardContent>
     </Card>
   );
 };
 
 
-const QueueColumn = ({ title, patients, onMove }: { title: string; patients: Patient[]; onMove: (id: number, nextStage: QueueStage) => void; }) => {
+const QueueColumn = ({ title, patients, onMove }: { title: string; patients: Patient[]; onMove: (patientId: string, nextStage: QueueStage | 'Discharge') => void; }) => {
   return (
-    <Card className="flex-1 min-w-[300px] bg-muted/50">
+    <Card className="flex-1 min-w-[300px] bg-muted/50 flex flex-col">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent>
-        {patients.map(p => <PatientCard key={p.id} patient={p} onMove={onMove} />)}
+      <CardContent className="flex-grow overflow-y-auto">
+        {patients.sort((a, b) => a.checkInTime.getTime() - b.checkInTime.getTime()).map(p => <PatientCard key={p.id} patient={p} onMove={onMove} />)}
         {patients.length === 0 && <p className="text-muted-foreground text-center p-8">No patients in this stage.</p>}
       </CardContent>
     </Card>
   );
 };
 
-export default function QueuePage() {
-  const [patients, setPatients] = useState<Patient[]>(dummyPatients);
+export default function ClinicQueueManager() {
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [patientIdCounter, setPatientIdCounter] = useState(1);
 
-  const handleMovePatient = (id: number, nextStage: QueueStage) => {
-    setPatients(prev => prev.map(p => {
-        if (p.id === id) {
-            return {
-                ...p,
-                stage: nextStage,
-                status: 'waiting',
-                waitingSince: new Date()
+  const handleCheckIn = (name: string) => {
+    const newPatient: Patient = {
+        id: `P-${String(patientIdCounter).padStart(3, '0')}`,
+        name,
+        stage: 'Waiting Room',
+        checkInTime: new Date(),
+    };
+    setPatients(prev => [...prev, newPatient]);
+    setPatientIdCounter(prev => prev + 1);
+  }
+
+  const handleMovePatient = (patientId: string, nextStage: QueueStage | 'Discharge') => {
+    if (nextStage === 'Discharge') {
+        setPatients(prev => prev.filter(p => p.id !== patientId));
+    } else {
+        setPatients(prev => prev.map(p => {
+            if (p.id === patientId) {
+                return {
+                    ...p,
+                    stage: nextStage,
+                    checkInTime: new Date(), // Reset timer for the new stage
+                }
             }
-        }
-        return p;
-    }));
+            return p;
+        }));
+    }
   };
 
   return (
-    <main className="p-4 md:p-6 lg:p-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold">Patient Queue</h1>
+    <main className="p-4 md:p-6 lg:p-8 h-screen flex flex-col">
+      <header className="mb-6">
+        <h1 className="text-3xl font-bold">Clinic Queue Manager</h1>
         <p className="text-muted-foreground">
-          Manage the flow of patients through the clinic in real-time.
+          Visualize and manage the patient flow in real-time.
         </p>
       </header>
 
-      <div className="flex flex-col lg:flex-row gap-6 overflow-x-auto pb-4">
+      <CheckInForm onCheckIn={handleCheckIn} />
+
+      <div className="flex-grow flex flex-col lg:flex-row gap-6 overflow-x-auto pb-4">
         {STAGES.map((stage) => (
           <QueueColumn
             key={stage}
-            title={STAGE_TITLES[stage]}
+            title={stage}
             patients={patients.filter(p => p.stage === stage)}
             onMove={handleMovePatient}
           />
