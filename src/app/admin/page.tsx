@@ -1,12 +1,28 @@
+'use client';
+
+import { useState } from 'react';
 import Link from "next/link";
 import Image from "next/image";
 
 import StatCard from "@/components/StatCard";
 import DataTable from "@/components/DataTable";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
-const AdminPage = async () => {
+type FilterPeriod = '3d' | '7d' | '30d' | '365d';
+
+const AdminPage = () => {
+  const [activeFilter, setActiveFilter] = useState<FilterPeriod>('7d');
+
+  const filterButtons: { label: string; value: FilterPeriod }[] = [
+    { label: 'Last 3 Days', value: '3d' },
+    { label: 'Last 7 Days', value: '7d' },
+    { label: 'Last 30 Days', value: '30d' },
+    { label: 'Last Year', value: '365d' },
+  ];
+
   return (
-    <div className="mx-auto flex max-w-7xl flex-col space-y-14">
+    <div className="mx-auto flex max-w-7xl flex-col space-y-14 p-4 md:p-0">
       <header className="admin-header">
         <Link href="/" className="cursor-pointer">
           <Image
@@ -26,6 +42,22 @@ const AdminPage = async () => {
             Start the day with managing your clinic&apos;s performance.
           </p>
         </section>
+
+        <div className="flex flex-wrap items-center gap-2">
+            {filterButtons.map((filter) => (
+                <Button
+                key={filter.value}
+                onClick={() => setActiveFilter(filter.value)}
+                className={cn('h-9 rounded-md px-4', {
+                    'bg-primary text-primary-foreground hover:bg-primary/90': activeFilter === filter.value,
+                    'bg-secondary text-secondary-foreground hover:bg-secondary/80': activeFilter !== filter.value,
+                })}
+                >
+                {filter.label}
+                </Button>
+            ))}
+        </div>
+
         <section className="admin-stat">
           <StatCard
             type="appointments"
