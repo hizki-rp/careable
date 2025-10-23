@@ -39,6 +39,7 @@ export default function RootLayout({
               <Link href="/admin" className="hover:text-green-500">Admin Dashboard</Link>
               <Link href="/patients/user1/register" className="hover:text-green-500">Register</Link>
               <Link href="/patients/user1/new-appointment" className="hover:text-green-500">New Appointment</Link>
+              <Link href="/reception/add-user" className="hover:text-green-500">Add Patient</Link>
             </nav>
           </header>
           {children}
