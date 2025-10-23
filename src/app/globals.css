@@ -13,8 +13,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 215.4 16.3% 46.9%;
@@ -30,31 +30,45 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 142.1 76.2% 36.3%;
+    --ring: 217.2 91.2% 59.8%;
 
     --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-accent: 210 40% 96.1%;
+    --sidebar-accent-foreground: 222.2 84% 4.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 228 25% 15%; /* #1C1F2E */
-    --foreground: 0 0% 100%;
-    --card: 228 19% 18%; /* #252836 */
-    --card-foreground: 0 0% 100%;
-    --popover: 228 19% 18%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 151 56% 40%; /* #24AE7C */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 229 15% 23%; /* #2F3244 */
-    --secondary-foreground: 0 0% 100%;
-    --muted: 229 15% 23%;
-    --muted-foreground: 229 8% 58%;
-    --accent: 229 15% 23%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 229 15% 23%;
-    --input: 229 15% 23%;
-    --ring: 151 56% 40%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 217.2 91.2% 59.8%;
+
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -63,37 +77,37 @@
     @apply border-border;
   }
   body {
-    @apply bg-dark-300 text-white;
+    @apply bg-background text-foreground;
   }
 }
 
 @layer components {
   .sub-container {
-    @apply rounded-xl border border-dark-500 bg-dark-400 p-8 shadow-md xl:p-12;
+    @apply rounded-xl border bg-card p-8 shadow-md xl:p-12;
   }
 
   .form-input {
-    @apply flex rounded-md border border-dark-500 bg-dark-400;
+    @apply flex rounded-md border border-input bg-background;
   }
 
   .form-label {
-    @apply text-base font-semibold text-dark-700;
+    @apply text-base font-semibold text-muted-foreground;
   }
 
   .form-btn {
-    @apply flex h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-green-500 px-10 text-base font-bold;
+    @apply flex h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-primary px-10 text-base font-bold text-primary-foreground;
   }
 
   .form-btn_cancel {
-    @apply flex h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-dark-400 px-10 text-base font-bold;
+    @apply flex h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-card px-10 text-base font-bold;
   }
 
   .date-picker {
-    @apply flex h-11 items-center justify-between rounded-md border border-dark-500 bg-dark-400 px-3 py-2;
+    @apply flex h-11 items-center justify-between rounded-md border border-input bg-background px-3 py-2;
   }
 
   .file-uploader {
-    @apply flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-dark-500 bg-dark-400;
+    @apply flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-card;
   }
 }
 
@@ -106,11 +120,11 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: #1c1f2e;
+    background: hsl(var(--background));
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #424656;
+    background: hsl(var(--muted));
     border-radius: 6px;
   }
 
@@ -120,75 +134,75 @@
 
   /* TYPOGRAPHY */
   .h1-bold {
-    @apply text-36-bold;
+    @apply text-3xl font-bold;
   }
 
   .header {
-    @apply text-30-bold md:text-36-bold;
+    @apply text-2xl font-bold md:text-3xl;
   }
 
   .h2-bold {
-    @apply text-24-bold;
+    @apply text-xl font-bold;
   }
 
   .h3-bold {
-    @apply text-20-bold;
+    @apply text-lg font-bold;
   }
 
   .body-regular {
-    @apply text-16-regular;
+    @apply text-base font-normal;
   }
 
   .text-10-regular {
-    @apply text-10 font-normal;
+    @apply text-[10px] font-normal;
   }
   .text-12-regular {
-    @apply text-12 font-normal;
+    @apply text-xs font-normal;
   }
   .text-12-semibold {
-    @apply text-12 font-semibold;
+    @apply text-xs font-semibold;
   }
   .text-14-regular {
-    @apply text-14 font-normal;
+    @apply text-sm font-normal;
   }
   .text-14-medium {
-    @apply text-14 font-medium;
+    @apply text-sm font-medium;
   }
   .text-14-semibold {
-    @apply text-14 font-semibold;
+    @apply text-sm font-semibold;
   }
   .text-16-regular {
-    @apply text-16 font-normal;
+    @apply text-base font-normal;
   }
   .text-16-medium {
-    @apply text-16 font-medium;
+    @apply text-base font-medium;
   }
   .text-16-semibold {
-    @apply text-16 font-semibold;
+    @apply text-base font-semibold;
   }
   .text-18-medium {
-    @apply text-18 font-medium;
+    @apply text-lg font-medium;
   }
   .text-18-semibold {
-    @apply text-18 font-semibold;
+    @apply text-lg font-semibold;
   }
   .text-20-medium {
-    @apply text-20 font-medium;
+    @apply text-xl font-medium;
   }
   .text-20-semibold {
-    @apply text-20 font-semibold;
+    @apply text-xl font-semibold;
   }
   .text-24-medium {
-    @apply text-24 font-medium;
+    @apply text-2xl font-medium;
   }
   .text-24-semibold {
-    @apply text-24 font-semibold;
+    @apply text-2xl font-semibold;
   }
   .text-30-bold {
-    @apply text-30 font-bold;
+    @apply text-3xl font-bold;
   }
   .text-36-bold {
-    @apply text-36 font-bold;
+    @apply text-4xl font-bold;
   }
   
   .side-img {
@@ -196,7 +210,7 @@
   }
   
   .copyright {
-    @apply text-14-regular text-dark-600;
+    @apply text-sm text-muted-foreground;
   }
   
   .admin-header {

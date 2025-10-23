@@ -3,6 +3,9 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import Link from "next/link";
+import { Sidebar, SidebarContent, SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Home, User, UserPlus, LayoutDashboard, CalendarPlus } from "lucide-react";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "CarePulse",
@@ -27,22 +30,36 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "min-h-screen bg-dark-300 font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased",
           "font-body"
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <header className="flex justify-center p-4 bg-dark-400">
-            <nav className="flex gap-4 text-white">
-              <Link href="/" className="hover:text-green-500">Home</Link>
-              <Link href="/?admin=true" className="hover:text-green-500">Admin Login</Link>
-              <Link href="/admin" className="hover:text-green-500">Admin Dashboard</Link>
-              <Link href="/patients/user1/register" className="hover:text-green-500">Register</Link>
-              <Link href="/patients/user1/new-appointment" className="hover:text-green-500">New Appointment</Link>
-              <Link href="/reception/add-user" className="hover:text-green-500">Add Patient</Link>
-            </nav>
-          </header>
-          {children}
+          <SidebarProvider>
+            <Sidebar>
+                <SidebarContent className="flex flex-col">
+                  <header className="p-4 flex items-center gap-2">
+                    <Link href="/" className="font-bold text-xl text-primary">CarePulse</Link>
+                  </header>
+                  <nav className="flex flex-col gap-2 p-4">
+                    <Link href="/" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><Home size={20} /><span>Home</span></Link>
+                    <Link href="/?admin=true" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><User size={20} /><span>Admin Login</span></Link>
+                    <Link href="/admin" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><LayoutDashboard size={20} /><span>Admin Dashboard</span></Link>
+                    <Link href="/patients/user1/register" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><UserPlus size={20} /><span>Register</span></Link>
+                    <Link href="/patients/user1/new-appointment" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><CalendarPlus size={20} /><span>New Appointment</span></Link>
+                    <Link href="/reception/add-user" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><UserPlus size={20} /><span>Add Patient</span></Link>
+                  </nav>
+                </SidebarContent>
+            </Sidebar>
+            <SidebarInset>
+              <header className="p-4 flex items-center gap-4 border-b">
+                <SidebarTrigger className="md:hidden" />
+                <h1 className="text-lg font-semibold">Welcome to CarePulse</h1>
+              </header>
+              {children}
+            </SidebarInset>
+          </SidebarProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
