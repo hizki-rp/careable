@@ -25,6 +25,8 @@ import {
 import { type ExtractUserDataOutput, extractUserData } from '@/ai/flows/extract-user-data-flow';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Image from 'next/image';
+import { usePatientQueue } from '@/context/PatientQueueContext';
+import { useRouter } from 'next/navigation';
 
 type IdSide = 'front' | 'back';
 
@@ -44,6 +46,9 @@ export default function AddUserPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
+  const { addPatient } = usePatientQueue();
+  const router = useRouter();
+
 
   useEffect(() => {
     if (isCameraOpen) {
@@ -156,6 +161,36 @@ export default function AddUserPage() {
     )
   }
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name) {
+        toast({
+            variant: "destructive",
+            title: "Name is required",
+            description: "Please enter the patient's full name.",
+        });
+        return;
+    }
+
+    addPatient({ name, email, phone, address });
+    
+    toast({
+        title: "Patient Added",
+        description: `${name} has been added to the waiting room queue.`,
+    });
+
+    // Optionally clear the form
+    setName('');
+    setEmail('');
+    setPhone('');
+    setAddress('');
+    setFrontIdImage(null);
+    setBackIdImage(null);
+
+    // Redirect to the queue page
+    router.push('/reception/queue');
+  }
+
 
   return (
     <main className="flex justify-center items-start pt-12 md:pt-24 min-h-screen p-4">
@@ -198,10 +233,10 @@ export default function AddUserPage() {
                 </div>
             </div>
           
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
-                <Input id="name" placeholder="Enter patient's full name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Input id="name" placeholder="Enter patient's full name" value={name} onChange={(e) => setName(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
@@ -221,7 +256,7 @@ export default function AddUserPage() {
                 <Label htmlFor="address">Address</Label>
                 <Input id="address" placeholder="Enter patient's address" value={address} onChange={(e) => setAddress(e.target.value)} />
                 </div>
-                <Button type="submit" className="w-full" disabled>
+                <Button type="submit" className="w-full">
                 <UserPlus className="mr-2 h-4 w-4" />
                 Create Patient Account
                 </Button>

@@ -11,15 +11,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-type QueueStage = 'Waiting Room' | 'Questioning' | 'Laboratory Test' | 'Results by Doctor';
-
-interface Patient {
-  id: string;
-  name: string;
-  stage: QueueStage;
-  checkInTime: Date;
-}
+import { usePatientQueue, type Patient, type QueueStage } from '@/context/PatientQueueContext';
 
 const STAGES: QueueStage[] = ['Waiting Room', 'Questioning', 'Laboratory Test', 'Results by Doctor'];
 
@@ -117,36 +109,7 @@ const QueueColumn = ({ title, patients, onMove }: { title: string; patients: Pat
 };
 
 export default function ClinicQueueManager() {
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [patientIdCounter, setPatientIdCounter] = useState(1);
-
-  const handleCheckIn = (name: string) => {
-    const newPatient: Patient = {
-        id: `P-${String(patientIdCounter).padStart(3, '0')}`,
-        name,
-        stage: 'Waiting Room',
-        checkInTime: new Date(),
-    };
-    setPatients(prev => [...prev, newPatient]);
-    setPatientIdCounter(prev => prev + 1);
-  }
-
-  const handleMovePatient = (patientId: string, nextStage: QueueStage | 'Discharge') => {
-    if (nextStage === 'Discharge') {
-        setPatients(prev => prev.filter(p => p.id !== patientId));
-    } else {
-        setPatients(prev => prev.map(p => {
-            if (p.id === patientId) {
-                return {
-                    ...p,
-                    stage: nextStage,
-                    checkInTime: new Date(), // Reset timer for the new stage
-                }
-            }
-            return p;
-        }));
-    }
-  };
+  const { patients, addPatient, movePatient } = usePatientQueue();
 
   return (
     <main className="p-4 md:p-6 lg:p-8 h-screen flex flex-col">
@@ -157,7 +120,7 @@ export default function ClinicQueueManager() {
         </p>
       </header>
 
-      <CheckInForm onCheckIn={handleCheckIn} />
+      <CheckInForm onCheckIn={addPatient} />
 
       <div className="flex-grow flex flex-col lg:flex-row gap-6 overflow-x-auto pb-4">
         {STAGES.map((stage) => (
@@ -165,7 +128,7 @@ export default function ClinicQueueManager() {
             key={stage}
             title={stage}
             patients={patients.filter(p => p.stage === stage)}
-            onMove={handleMovePatient}
+            onMove={movePatient}
           />
         ))}
       </div>
