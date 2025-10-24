@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -347,3 +348,5 @@ export default function ClinicQueueManager() {
     </RoleProvider>
   );
 }
+
+    
