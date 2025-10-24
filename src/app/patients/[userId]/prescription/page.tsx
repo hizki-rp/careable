@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from '@/components/ui/checkbox';
 import { Printer } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const PrescriptionPage = () => {
     const { userId } = useParams();
@@ -33,7 +34,6 @@ const PrescriptionPage = () => {
         return <div className="flex justify-center items-center h-screen"><p>Loading prescription...</p></div>;
     }
 
-    // Simple parsing of prescription text for the table
     const prescriptionItems = patient.prescription?.split('\n').map(line => {
         const parts = line.split(',');
         return {
@@ -45,104 +45,66 @@ const PrescriptionPage = () => {
     }) || [];
 
     return (
-        <div className="bg-background text-foreground min-h-screen">
-            <div className="container mx-auto p-4 sm:p-8 max-w-4xl bg-card text-card-foreground rounded-lg shadow-lg my-8 print:shadow-none print:my-0 print:rounded-none">
-                <header className="text-center mb-8 border-b pb-4">
-                    <h1 className="text-3xl font-bold text-primary">Menaharia Medium Clinic</h1>
-                    <p className="text-muted-foreground">☎: 022 331 77 57 / Asella</p>
-                    <h2 className="text-2xl font-semibold mt-2">PRESCRIPTION PAPER</h2>
+        <div className="bg-background text-foreground min-h-screen p-4 sm:p-8 print:bg-white">
+            <main className="max-w-4xl mx-auto space-y-8">
+                <header className="text-center py-4 border-b-4 border-primary bg-card rounded-xl shadow-xl print:shadow-none print:border-b-2">
+                    <h1 className="text-3xl font-extrabold text-foreground">Menaharia Medium Clinic</h1>
+                    <p className="text-md text-muted-foreground mt-1">☎: 022 331 77 57 / Asella</p>
                 </header>
 
-                <section className="patient-info mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                        <div className="col-span-1 md:col-span-2 lg:col-span-2">
-                            <Label htmlFor="patientName">Patient's Full Name</Label>
-                            <Input id="patientName" value={patient.name} readOnly />
-                        </div>
-                        <div>
-                            <Label htmlFor="sex">Sex</Label>
-                            <Input id="sex" readOnly />
-                        </div>
-                        <div>
-                            <Label htmlFor="age">Age</Label>
-                            <Input id="age" readOnly />
-                        </div>
-                        <div>
-                            <Label htmlFor="weight">Weight</Label>
-                            <Input id="weight" readOnly />
-                        </div>
-                        <div>
-                            <Label htmlFor="cardNo">Card No.</Label>
-                            <Input id="cardNo" value={patient.id} readOnly/>
-                        </div>
-                        <div className="col-span-1 md:col-span-2 lg:col-span-2">
-                            <Label htmlFor="telNo">Tel No.</Label>
-                            <Input id="telNo" value={patient.phone || ''} readOnly />
-                        </div>
-                        <div className="col-span-full">
-                            <Label htmlFor="address">Address</Label>
-                            <Input id="address" value={patient.address || ''} readOnly />
-                        </div>
-                    <div className="col-span-1 md:col-span-2 flex items-center gap-4 pt-6">
-                            <div className="flex items-center gap-2">
-                                <Checkbox id="inpatient"/>
-                                <Label htmlFor="inpatient">Inpatient</Label>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Checkbox id="outpatient" checked/>
-                                <Label htmlFor="outpatient">Out patient</Label>
-                            </div>
+                <h2 className="text-2xl font-bold text-foreground text-center uppercase tracking-wider">Prescription Paper</h2>
+
+                <section className="bg-card p-6 rounded-xl shadow-lg border print:shadow-none">
+                    <h3 className="text-xl font-semibold text-foreground mb-4 border-b pb-2">Patient Information</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <div><Label>Patient's Full Name</Label><Input value={patient.name} readOnly /></div>
+                        <div><Label>Sex</Label><Input readOnly /></div>
+                        <div><Label>Age</Label><Input type="number" readOnly /></div>
+                        <div><Label>Weight (kg)</Label><Input type="number" readOnly /></div>
+                        <div><Label>Card No.</Label><Input value={patient.id} readOnly /></div>
+                        <div><Label>Tel No.</Label><Input type="tel" value={patient.phone} readOnly /></div>
                     </div>
-                    </div>
-                </section>
-                <section className="diagnosis mb-6">
-                    <Label htmlFor="diagnosis">Diagnosis</Label>
-                    <Input id="diagnosis" value={patient.diagnosis || ''} readOnly />
+                    
+                    <div className="mb-4"><Label>Address</Label><Input value={patient.address} readOnly /></div>
+
+                    <RadioGroup defaultValue="outpatient" className="flex space-x-6">
+                        <div className="flex items-center"><RadioGroupItem value="inpatient" id="inpatient"/><Label htmlFor="inpatient" className="ml-2">Inpatient</Label></div>
+                        <div className="flex items-center"><RadioGroupItem value="outpatient" id="outpatient"/><Label htmlFor="outpatient" className="ml-2">Outpatient</Label></div>
+                    </RadioGroup>
                 </section>
 
-                <section className="rx-section mb-6">
-                    <h3 className="text-xl font-bold mb-2">Rx</h3>
+                <section className="bg-card p-6 rounded-xl shadow-lg border print:shadow-none">
+                    <h3 className="text-xl font-semibold text-foreground mb-4 border-b pb-2">Diagnosis</h3>
+                    <Input className="h-24" value={patient.diagnosis || ''} readOnly />
+                </section>
+                
+                <section className="bg-card p-6 rounded-xl shadow-lg border print:shadow-none">
+                    <h3 className="text-xl font-semibold text-foreground mb-4 border-b pb-2">Rx (Medication)</h3>
                     <div className="overflow-x-auto">
                         <table className="w-full border-collapse border">
-                            <thead>
+                             <thead>
                                 <tr className="bg-muted">
-                                    <th className="border p-2 text-sm">Drug name</th>
-                                    <th className="border p-2 text-sm">Strength</th>
-                                    <th className="border p-2 text-sm">Dosage Form</th>
-                                    <th className="border p-2 text-sm">Dose</th>
-                                    <th className="border p-2 text-sm">Frequency</th>
-                                    <th className="border p-2 text-sm">Duration</th>
-                                    <th className="border p-2 text-sm">Quantity</th>
-                                    <th className="border p-2 text-sm">How to use and other information</th>
-                                    <th className="border p-2 text-sm">Price (dispenser's use only)</th>
+                                    <th className="border p-2 text-sm text-left">Drug name, Strength, Dosage Form</th>
+                                    <th className="border p-2 text-sm text-left">Dose</th>
+                                    <th className="border p-2 text-sm text-left">Frequency</th>
+                                    <th className="border p-2 text-sm text-left">Duration</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {prescriptionItems.map((item, index) => (
                                     <tr key={index}>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" value={item.drugName} readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" value={item.dose} readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" value={item.frequency} readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" value={item.duration} readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" disabled/></td>
+                                        <td className="border p-2">{item.drugName}</td>
+                                        <td className="border p-2">{item.dose}</td>
+                                        <td className="border p-2">{item.frequency}</td>
+                                        <td className="border p-2">{item.duration}</td>
                                     </tr>
                                 ))}
-                                {/* Add empty rows for spacing */}
-                                {Array.from({ length: Math.max(0, 5 - prescriptionItems.length) }).map((_, index) => (
-                                    <tr key={`empty-${index}`}>
-                                        <td className="border h-12"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" readOnly/></td>
-                                        <td className="border"><Input type="text" className="border-0 rounded-none w-full" disabled/></td>
+                                {Array.from({ length: Math.max(0, 8 - prescriptionItems.length) }).map((_, index) => (
+                                     <tr key={`empty-${index}`}>
+                                        <td className="border p-2 h-10"></td>
+                                        <td className="border p-2"></td>
+                                        <td className="border p-2"></td>
+                                        <td className="border p-2"></td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -150,72 +112,50 @@ const PrescriptionPage = () => {
                     </div>
                 </section>
 
-                <footer className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t">
-                    <div className="prescriber-section space-y-4">
-                        <h4 className="font-bold text-lg">Prescriber's</h4>
-                        <div>
-                            <Label htmlFor="prescriberName">Full Name</Label>
-                            <Input id="prescriberName" value="Dr. Sarah Lee" readOnly/>
-                        </div>
-                        <div>
-                            <Label htmlFor="qualification">Qualification</Label>
-                            <Input id="qualification" value="General Practitioner" readOnly/>
-                        </div>
-                        <div>
-                            <Label htmlFor="registration">Registration</Label>
-                            <Input id="registration" value="MD-12345" readOnly/>
-                        </div>
-                        <div>
-                            <Label htmlFor="signature">Signature</Label>
-                            <div className="h-12 border rounded-md bg-muted/20"></div>
-                        </div>
-                        <div>
-                            <Label htmlFor="date">Date</Label>
-                            <Input id="date" type="date" defaultValue={new Date().toISOString().split('T')[0]} readOnly />
-                        </div>
+                <section className="bg-card p-6 rounded-xl shadow-lg border print:shadow-none">
+                    <h3 className="text-xl font-semibold text-foreground mb-4 border-b pb-2">Prescriber's Information</h3>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                        <div><Label>Full Name</Label><Input value="Dr. Sarah Lee" readOnly /></div>
+                        <div><Label>Qualification</Label><Input value="General Practitioner" readOnly /></div>
+                        <div><Label>Registration No.</Label><Input value="MD-12345" readOnly /></div>
+                        <div><Label>Date</Label><Input type="date" defaultValue={new Date().toISOString().split('T')[0]} readOnly /></div>
                     </div>
+                    <div className="mt-4"><Label>Signature</Label><div className="w-full h-12 border-b mt-1"></div></div>
+                </section>
 
-                    <div className="dispenser-section space-y-4">
-                        <h4 className="font-bold text-lg">Dispenser's</h4>
-                        <div className="flex gap-4">
-                            <div className="w-full">
-                                <Label htmlFor="totalPrice">Total Price</Label>
-                                <Input id="totalPrice" disabled/>
-                            </div>
-                        </div>
-                        <div className="flex-grow space-y-2">
-                            <Label>Dispenser's Info</Label>
-                            <div className="h-48 border rounded-md bg-muted/20 p-2">
-                                {/* for signature or stamp */}
-                            </div>
-                        </div>
+                <section className="bg-card p-6 rounded-xl shadow-lg border print:shadow-none">
+                    <h3 className="text-xl font-semibold text-foreground mb-4 border-b pb-2">Dispenser's Use Only</h3>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                        <div><Label>Total Price</Label><Input placeholder="Price (dispenser's use only)" disabled /></div>
+                        <div><Label>Dispenser's Info</Label><Input disabled /></div>
                     </div>
-                </footer>
-                <div className="mt-8 flex justify-end print:hidden">
-                   <Button onClick={handlePrint}><Printer className="mr-2 h-4 w-4" />Print Prescription</Button>
+                </section>
+                
+                <div className="text-center pb-8 pt-4 print:hidden">
+                    <Button onClick={handlePrint} size="lg" className="rounded-full shadow-lg">
+                        <Printer className="mr-2" />
+                        Generate/Print Prescription
+                    </Button>
                 </div>
-
-                <style jsx global>{`
-                    @media print {
-                        body {
-                            background-color: #fff;
-                        }
-                        .print\\:hidden {
-                            display: none;
-                        }
-                        .print\\:shadow-none {
-                            box-shadow: none;
-                        }
-                        .print\\:my-0 {
-                            margin-top: 0;
-                            margin-bottom: 0;
-                        }
-                        .print\\:rounded-none {
-                            border-radius: 0;
-                        }
+            </main>
+             <style jsx global>{`
+                @media print {
+                    body {
+                        background-color: #fff !important;
                     }
-                `}</style>
-            </div>
+                    .print\\:hidden {
+                        display: none;
+                    }
+                    .print\\:shadow-none {
+                        box-shadow: none;
+                        border: 1px solid #e5e7eb;
+                    }
+                    main {
+                        margin: 0;
+                        max-width: 100%;
+                    }
+                }
+            `}</style>
         </div>
     );
 }
