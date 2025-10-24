@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "onboarding-img",
-      "description": "Patient smiling",
-      "imageUrl": "https://images.unsplash.com/photo-1584515933487-779824d29309?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxkb2N0b3IlMjBwYXRpZW50fGVufDB8fHx8MTc2MTIxMjc2OHww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "doctor patient"
+      "description": "A modern and clean clinic reception area",
+      "imageUrl": "https://images.unsplash.com/photo-1551192017-e02b8210341b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjbGluaWMlMjByZWNlcHRpb258ZW58MHx8fHwxNzYxMjI1NzU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "clinic reception"
     },
     {
       "id": "register-img",
