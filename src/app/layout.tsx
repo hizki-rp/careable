@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import Link from "next/link";
 import { Sidebar, SidebarContent, SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Home, User, UserPlus, LayoutDashboard, ListOrdered } from "lucide-react";
+import { Home, User, UserPlus, LayoutDashboard, ListOrdered, FileText } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
 import { PatientQueueProvider } from "@/context/PatientQueueContext";
 
