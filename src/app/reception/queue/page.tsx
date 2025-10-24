@@ -258,7 +258,7 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
 
 const QueueColumn = ({ title, patients, color }: { title: string; patients: Patient[], color: string }) => {
   return (
-    <div className="flex-1 min-w-[320px] max-w-md">
+    <div className="w-full">
         <Card className="bg-muted/30 rounded-xl shadow-lg border border-border/50 h-full flex flex-col">
             <CardHeader className="flex flex-row justify-between items-center p-4 border-b">
                 <CardTitle className="text-lg font-semibold flex items-center gap-2">
@@ -318,7 +318,7 @@ export default function ClinicQueueManager() {
 
   return (
     <RoleProvider>
-        <main className="p-4 md:p-6 lg:p-8 h-screen flex flex-col bg-background">
+        <main className="p-4 md:p-6 lg:p-8 flex flex-col bg-background">
         <header className="mb-6 flex flex-wrap gap-4 justify-between items-center">
             <div>
                 <h1 className="text-3xl font-extrabold">Clinic Queue Manager</h1>
@@ -334,7 +334,7 @@ export default function ClinicQueueManager() {
             </div>
         </header>
 
-        <div className="flex-grow flex gap-6 overflow-x-auto pb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             {STAGES.map((stage) => (
             <QueueColumn
                 key={stage}
