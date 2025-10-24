@@ -132,29 +132,25 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
     if (!isVisible) return null;
 
     return (
-        <Button size="sm" variant="outline" onClick={handleTestAction} className="w-full">
+        <Button size="sm" variant="outline" onClick={handleTestAction} className="w-full mt-4">
             {icon} {text}
         </Button>
     )
   };
 
   return (
-    <Card className="mb-4 bg-card">
-      <CardContent className="p-4 flex flex-col items-start gap-4">
-        <div className="flex items-center gap-4 w-full">
-          <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center shrink-0">
-            <User className="text-muted-foreground" size={20} />
-          </div>
-          <div className="flex-grow">
-            <p className="font-semibold">{patient.name}</p>
-            <p className="text-sm text-muted-foreground">ID: {patient.id}</p>
-          </div>
-          {patient.stage === 'Results by Doctor' && role === 'Doctor' && (
-            <Button variant="ghost" size="icon" onClick={handlePrint} title="Print Summary">
-              <Printer className="h-5 w-5"/>
-            </Button>
-          )}
+    <Card className="mb-4 bg-card shadow-md border-l-4 border-primary">
+      <CardContent className="p-4 flex flex-col items-start gap-1">
+        <div className="flex items-center justify-between w-full">
+            <p className="font-bold text-lg">{patient.name}</p>
+            {patient.stage === 'Results by Doctor' && role === 'Doctor' && (
+                <Button variant="ghost" size="icon" onClick={handlePrint} title="Print Summary">
+                <Printer className="h-5 w-5"/>
+                </Button>
+            )}
         </div>
+        <p className="text-sm text-muted-foreground">Checked in at: {patient.checkInTime.toLocaleTimeString()}</p>
+
         
         {getActionButton()}
         
@@ -259,17 +255,23 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
 };
 
 
-const QueueColumn = ({ title, patients }: { title: string; patients: Patient[] }) => {
+const QueueColumn = ({ title, patients, color }: { title: string; patients: Patient[], color: string }) => {
   return (
-    <Card className="flex-1 min-w-[300px] bg-muted/50 flex flex-col">
-      <CardHeader>
-        <CardTitle>{title} ({patients.length})</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-grow overflow-y-auto p-4">
-        {patients.sort((a, b) => a.checkInTime.getTime() - b.checkInTime.getTime()).map(p => <PatientCard key={p.id} patient={p} />)}
-        {patients.length === 0 && <p className="text-muted-foreground text-center p-8">No patients in this stage.</p>}
-      </CardContent>
-    </Card>
+    <div className="flex-1 min-w-[320px] max-w-md">
+        <Card className="bg-muted/30 rounded-xl shadow-lg border border-border/50 h-full flex flex-col">
+            <CardHeader className="flex flex-row justify-between items-center p-4 border-b">
+                <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                    <span className={`w-3 h-3 rounded-full ${color}`}></span>
+                    {title}
+                </CardTitle>
+                 <span className="bg-primary/20 text-primary font-bold text-sm px-3 py-1 rounded-full">{patients.length}</span>
+            </CardHeader>
+            <CardContent className="flex-grow overflow-y-auto p-4 space-y-4">
+                {patients.sort((a, b) => a.checkInTime.getTime() - b.checkInTime.getTime()).map(p => <PatientCard key={p.id} patient={p} />)}
+                {patients.length === 0 && <p className="text-muted-foreground text-center p-8">No patients here.</p>}
+            </CardContent>
+        </Card>
+    </div>
   );
 };
 
@@ -285,10 +287,10 @@ const RoleProvider = ({ children }: { children: React.ReactNode }) => {
 const RoleSwitcher = () => {
     const { role, setRole } = useRole();
     return (
-        <div className="flex items-center gap-4">
-            <Label>Current Role:</Label>
+        <div className="flex items-center gap-2">
+            <Label htmlFor="role-switcher" className="text-sm">Role:</Label>
             <Select value={role} onValueChange={(value) => setRole(value as Role)}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger id="role-switcher" className="w-[180px] bg-card">
                     <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -306,14 +308,21 @@ export default function ClinicQueueManager() {
   const { patients } = usePatientQueue();
   const router = useRouter();
 
+  const columnColors = {
+    'Waiting Room': 'bg-blue-500',
+    'Questioning': 'bg-yellow-500',
+    'Laboratory Test': 'bg-purple-500',
+    'Results by Doctor': 'bg-green-500',
+  }
+
   return (
     <RoleProvider>
-        <main className="p-4 md:p-6 lg:p-8 h-screen flex flex-col">
+        <main className="p-4 md:p-6 lg:p-8 h-screen flex flex-col bg-background">
         <header className="mb-6 flex flex-wrap gap-4 justify-between items-center">
             <div>
-                <h1 className="text-3xl font-bold">Clinic Queue Manager</h1>
-                <p className="text-muted-foreground">
-                Visualize and manage the patient flow in real-time.
+                <h1 className="text-3xl font-extrabold">Clinic Queue Manager</h1>
+                <p className="text-lg text-muted-foreground">
+                    Real-time patient flow management.
                 </p>
             </div>
             <div className="flex items-center gap-4">
@@ -324,12 +333,13 @@ export default function ClinicQueueManager() {
             </div>
         </header>
 
-        <div className="flex-grow flex flex-col lg:flex-row gap-6 overflow-x-auto pb-4">
+        <div className="flex-grow flex gap-6 overflow-x-auto pb-4">
             {STAGES.map((stage) => (
             <QueueColumn
                 key={stage}
                 title={stage}
                 patients={patients.filter(p => p.stage === stage)}
+                color={columnColors[stage]}
             />
             ))}
         </div>
