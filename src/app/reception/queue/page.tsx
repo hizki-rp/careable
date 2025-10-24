@@ -6,10 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ArrowRight, User, Stethoscope, Beaker, ClipboardPlus, FileText, Printer, Plus } from 'lucide-react';
-import React, { useState } from 'react';
+import { ArrowRight, User, Stethoscope, Beaker, ClipboardPlus, Printer, Plus, UserCheck, TestTube, LogOut } from 'lucide-react';
+import React, { useState, useContext, createContext } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePatientQueue, type Patient, type QueueStage } from '@/context/PatientQueueContext';
 import {
@@ -24,15 +23,32 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const STAGES: QueueStage[] = ['Waiting Room', 'Questioning', 'Laboratory Test', 'Results by Doctor'];
 const AVAILABLE_LAB_TESTS = ["Complete Blood Count (CBC)", "Urinalysis", "Blood Glucose", "Lipid Panel", "Liver Function Test"];
 
+type Role = 'Receptionist' | 'Doctor' | 'Laboratorian';
+
+interface RoleContextType {
+    role: Role;
+    setRole: (role: Role) => void;
+}
+
+const RoleContext = createContext<RoleContextType | undefined>(undefined);
+
+const useRole = () => {
+    const context = useContext(RoleContext);
+    if (!context) {
+        throw new Error('useRole must be used within a RoleProvider');
+    }
+    return context;
+}
 
 const PatientCard = ({ patient }: { patient: Patient }) => {
   const { movePatient } = usePatientQueue();
+  const { role } = useRole();
   const [isQuestioningModalOpen, setQuestioningModalOpen] = useState(false);
   const [isLabModalOpen, setLabModalOpen] = useState(false);
   const [isDoctorModalOpen, setDoctorModalOpen] = useState(false);
@@ -47,16 +63,16 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
   const handleTestAction = () => {
     switch (patient.stage) {
       case 'Waiting Room':
-        movePatient(patient.id, 'Questioning');
+        if(role === 'Receptionist') movePatient(patient.id, 'Questioning');
         break;
       case 'Questioning':
-        setQuestioningModalOpen(true);
+        if(role === 'Doctor') setQuestioningModalOpen(true);
         break;
       case 'Laboratory Test':
-        setLabModalOpen(true);
+        if(role === 'Laboratorian') setLabModalOpen(true);
         break;
       case 'Results by Doctor':
-        setDoctorModalOpen(true);
+        if(role === 'Doctor') setDoctorModalOpen(true);
         break;
     }
   };
@@ -84,25 +100,35 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
 
   const getActionButton = () => {
     let text = '';
-    let icon = <ArrowRight className="ml-2 h-4 w-4" />;
+    let icon: React.ReactNode = <ArrowRight className="ml-2 h-4 w-4" />;
+    let isVisible = false;
+
     switch (patient.stage) {
       case 'Waiting Room':
         text = 'Start Questioning';
+        icon = <UserCheck className="mr-2 h-4 w-4" />
+        isVisible = role === 'Receptionist';
         break;
       case 'Questioning':
         text = 'Assign Lab Tests';
         icon = <Stethoscope className="mr-2 h-4 w-4" />;
+        isVisible = role === 'Doctor';
         break;
 
       case 'Laboratory Test':
         text = 'Add Lab Results';
-        icon = <Beaker className="mr-2 h-4 w-4" />;
+        icon = <TestTube className="mr-2 h-4 w-4" />;
+        isVisible = role === 'Laboratorian';
         break;
       case 'Results by Doctor':
         text = 'Diagnose & Discharge';
-        icon = <ClipboardPlus className="mr-2 h-4 w-4" />;
+        icon = <LogOut className="mr-2 h-4 w-4" />;
+        isVisible = role === 'Doctor';
         break;
     }
+
+    if (!isVisible) return null;
+
     return (
         <Button size="sm" variant="outline" onClick={handleTestAction} className="w-full">
             {icon} {text}
@@ -121,7 +147,7 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
             <p className="font-semibold">{patient.name}</p>
             <p className="text-sm text-muted-foreground">ID: {patient.id}</p>
           </div>
-          {patient.stage === 'Results by Doctor' && (
+          {patient.stage === 'Results by Doctor' && role === 'Doctor' && (
             <Button variant="ghost" size="icon" onClick={handlePrint} title="Print Summary">
               <Printer className="h-5 w-5"/>
             </Button>
@@ -141,12 +167,12 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
                     {AVAILABLE_LAB_TESTS.map(test => (
                         <div key={test} className="flex items-center space-x-2">
                             <Checkbox 
-                                id={test} 
+                                id={`test-${patient.id}-${test}`}
                                 onCheckedChange={(checked) => {
                                     setSelectedTests(prev => checked ? [...prev, test] : prev.filter(t => t !== test))
                                 }}
                             />
-                            <label htmlFor={test} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            <label htmlFor={`test-${patient.id}-${test}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 {test}
                             </label>
                         </div>
@@ -245,33 +271,67 @@ const QueueColumn = ({ title, patients }: { title: string; patients: Patient[] }
   );
 };
 
+const RoleProvider = ({ children }: { children: React.ReactNode }) => {
+    const [role, setRole] = useState<Role>('Receptionist');
+    return (
+        <RoleContext.Provider value={{ role, setRole }}>
+            {children}
+        </RoleContext.Provider>
+    )
+}
+
+const RoleSwitcher = () => {
+    const { role, setRole } = useRole();
+    return (
+        <div className="flex items-center gap-4">
+            <Label>Current Role:</Label>
+            <Select value={role} onValueChange={(value) => setRole(value as Role)}>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="Receptionist">Receptionist</SelectItem>
+                    <SelectItem value="Doctor">Doctor</SelectItem>
+                    <SelectItem value="Laboratorian">Laboratorian</SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
+    )
+}
+
+
 export default function ClinicQueueManager() {
   const { patients } = usePatientQueue();
   const router = useRouter();
 
   return (
-    <main className="p-4 md:p-6 lg:p-8 h-screen flex flex-col">
-      <header className="mb-6 flex justify-between items-center">
-        <div>
-            <h1 className="text-3xl font-bold">Clinic Queue Manager</h1>
-            <p className="text-muted-foreground">
-            Visualize and manage the patient flow in real-time.
-            </p>
-        </div>
-        <Button onClick={() => router.push('/reception/add-user')}>
-            <Plus className="mr-2 h-4 w-4"/> Add Patient
-        </Button>
-      </header>
+    <RoleProvider>
+        <main className="p-4 md:p-6 lg:p-8 h-screen flex flex-col">
+        <header className="mb-6 flex flex-wrap gap-4 justify-between items-center">
+            <div>
+                <h1 className="text-3xl font-bold">Clinic Queue Manager</h1>
+                <p className="text-muted-foreground">
+                Visualize and manage the patient flow in real-time.
+                </p>
+            </div>
+            <div className="flex items-center gap-4">
+                <RoleSwitcher />
+                <Button onClick={() => router.push('/reception/add-user')}>
+                    <Plus className="mr-2 h-4 w-4"/> Add Patient
+                </Button>
+            </div>
+        </header>
 
-      <div className="flex-grow flex flex-col lg:flex-row gap-6 overflow-x-auto pb-4">
-        {STAGES.map((stage) => (
-          <QueueColumn
-            key={stage}
-            title={stage}
-            patients={patients.filter(p => p.stage === stage)}
-          />
-        ))}
-      </div>
-    </main>
+        <div className="flex-grow flex flex-col lg:flex-row gap-6 overflow-x-auto pb-4">
+            {STAGES.map((stage) => (
+            <QueueColumn
+                key={stage}
+                title={stage}
+                patients={patients.filter(p => p.stage === stage)}
+            />
+            ))}
+        </div>
+        </main>
+    </RoleProvider>
   );
 }
