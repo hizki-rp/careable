@@ -23,6 +23,7 @@ export default function Home({ searchParams }: { searchParams: { admin?: string 
             priority
           />
 
+          <h1 className="header mb-4">Get Started</h1>
           <PatientForm />
 
           <div className="text-14-regular mt-20 flex justify-between">
