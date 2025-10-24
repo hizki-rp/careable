@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Doctors } from "@/lib/constants";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -65,7 +66,7 @@ const SuccessPage = () => {
           <Link href={`/`}>New Appointment</Link>
         </Button>
 
-        <p className="copyright">© 2024 CarePulse</p>
+        <p className="copyright">© 2024 Menaharia Medium Clinic</p>
       </div>
     </div>
   );

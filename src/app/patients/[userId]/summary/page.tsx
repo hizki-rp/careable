@@ -1,3 +1,4 @@
+
 'use client';
 
 import { usePatientQueue } from '@/context/PatientQueueContext';
@@ -40,7 +41,7 @@ const PatientSummaryPage = () => {
           
           <header className="flex justify-between items-start pb-6 border-b-2 border-gray-200 print:border-gray-400">
             <div>
-              <h1 className="text-3xl font-bold text-primary">CarePulse Clinic</h1>
+              <h1 className="text-3xl font-bold text-primary">Menaharia Medium Clinic</h1>
               <p className="text-muted-foreground">123 Health St, Wellness City</p>
             </div>
             <div className="text-right">
@@ -109,7 +110,7 @@ const PatientSummaryPage = () => {
               <Printer className="mr-2 h-4 w-4" />
               Print Summary
             </Button>
-            <p className="mt-4">Thank you for choosing CarePulse Clinic.</p>
+            <p className="mt-4">Thank you for choosing Menaharia Medium Clinic.</p>
           </footer>
         </div>
       </div>

@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 
 import RegisterForm from "@/components/forms/RegisterForm";
@@ -20,7 +21,7 @@ const Register = ({ params: { userId } }: { params: { userId: string } }) => {
 
           <RegisterForm />
 
-          <p className="copyright py-12">© 2024 CarePulse</p>
+          <p className="copyright py-12">© 2024 Menaharia Medium Clinic</p>
         </div>
       </section>
       

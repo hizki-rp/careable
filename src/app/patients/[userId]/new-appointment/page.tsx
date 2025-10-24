@@ -1,3 +1,4 @@
+
 import AppointmentForm from "@/components/forms/AppointmentForm";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Image from "next/image";
@@ -19,7 +20,7 @@ export default function NewAppointment({ params: { userId }}: { params: { userId
 
           <AppointmentForm type="create" userId={userId} patientId={"1"} />
 
-          <p className="copyright mt-10 py-12">© 2024 CarePulse</p>
+          <p className="copyright mt-10 py-12">© 2024 Menaharia Medium Clinic</p>
         </div>
       </section>
 

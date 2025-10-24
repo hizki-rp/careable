@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
@@ -9,7 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { PatientQueueProvider } from "@/context/PatientQueueContext";
 
 export const metadata: Metadata = {
-  title: "CarePulse",
+  title: "Menaharia Medium Clinic",
   description: "A healthcare management system for patients and doctors.",
 };
 
@@ -41,7 +42,7 @@ export default function RootLayout({
               <Sidebar>
                   <SidebarContent className="flex flex-col">
                     <header className="p-4 flex items-center gap-2">
-                      <Link href="/" className="font-bold text-xl text-primary">CarePulse</Link>
+                      <Link href="/" className="font-bold text-xl text-primary">Menaharia Medium Clinic</Link>
                     </header>
                     <nav className="flex flex-col gap-2 p-4">
                       <Link href="/" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><Home size={20} /><span>Home</span></Link>
@@ -56,7 +57,7 @@ export default function RootLayout({
               </Sidebar>
               <SidebarInset>
                 <header className="p-4 flex items-center justify-between md:hidden sticky top-0 bg-background z-10 border-b">
-                    <Link href="/" className="font-bold text-lg text-primary">CarePulse</Link>
+                    <Link href="/" className="font-bold text-lg text-primary">Menaharia Medium Clinic</Link>
                     <SidebarTrigger />
                 </header>
                 {children}

@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import PatientForm from "@/components/forms/PatientForm";
@@ -25,7 +26,7 @@ export default function Home({ searchParams }: { searchParams: { admin?: string 
           <PatientForm />
 
           <div className="text-14-regular mt-20 flex justify-between">
-            <p className="copyright">© 2024 CarePulse</p>
+            <p className="copyright">© 2024 Menaharia Medium Clinic</p>
             <Link href="/?admin=true" className="text-green-500">
               Admin
             </Link>
