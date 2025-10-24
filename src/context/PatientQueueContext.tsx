@@ -29,7 +29,7 @@ interface PatientDataUpdate {
 
 interface PatientQueueContextType {
   patients: Patient[];
-  addPatient: (patientData: Omit<Patient, 'id' | 'stage' | 'checkInTime'>) => void;
+  addPatient: (patientData: { name: string, email?: string, phone?: string, address?: string }) => void;
   movePatient: (patientId: string, nextStage: QueueStage, data?: PatientDataUpdate) => void;
   setPatients: React.Dispatch<React.SetStateAction<Patient[]>>;
   getPatientById: (patientId: string) => Patient | undefined;
@@ -44,7 +44,7 @@ export const PatientQueueProvider = ({ children }: { children: ReactNode }) => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [patientIdCounter, setPatientIdCounter] = useState(1);
 
-  const addPatient = (patientData: Omit<Patient, 'id' | 'stage' | 'checkInTime'>) => {
+  const addPatient = (patientData: { name: string, email?: string, phone?: string, address?: string }) => {
     const newPatient: Patient = {
       ...patientData,
       id: `P-${String(patientIdCounter).padStart(3, '0')}`,
