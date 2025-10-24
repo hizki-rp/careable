@@ -50,6 +50,7 @@ export default function RootLayout({
                       <Link href="/patients/user1/register" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><UserPlus size={20} /><span>Register</span></Link>
                       <Link href="/reception/add-user" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><UserPlus size={20} /><span>Add Patient</span></Link>
                       <Link href="/reception/queue" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><ListOrdered size={20} /><span>Patient Queue</span></Link>
+                      <Link href="/prescription" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><FileText size={20} /><span>Prescription</span></Link>
                     </nav>
                   </SidebarContent>
               </Sidebar>
