@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ArrowRight, User, Stethoscope, Beaker, ClipboardPlus, Printer, Plus, UserCheck, TestTube, LogOut } from 'lucide-react';
+import { ArrowRight, User, Stethoscope, Beaker, ClipboardPlus, Printer, Plus, UserCheck, TestTube, LogOut, FileText } from 'lucide-react';
 import React, { useState, useContext, createContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -92,6 +92,8 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
   const handleDischarge = () => {
     movePatient(patient.id, 'Discharged', { diagnosis, prescription });
     setDoctorModalOpen(false);
+    // Navigate to the prescription page
+    router.push(`/patients/${patient.id}/prescription`);
   }
   
   const handlePrint = () => {

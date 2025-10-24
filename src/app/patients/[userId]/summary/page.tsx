@@ -2,9 +2,9 @@
 'use client';
 
 import { usePatientQueue } from '@/context/PatientQueueContext';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Printer } from 'lucide-react';
+import { FileText, Printer } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Patient } from '@/context/PatientQueueContext';
 
@@ -12,6 +12,7 @@ const PatientSummaryPage = () => {
   const { userId } = useParams();
   const { getPatientById } = usePatientQueue();
   const [patient, setPatient] = useState<Patient | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (userId) {
@@ -105,12 +106,16 @@ const PatientSummaryPage = () => {
             </div>
           </section>
           
-          <footer className="mt-12 text-center text-xs text-muted-foreground print:hidden">
+          <footer className="mt-12 flex flex-col sm:flex-row justify-center items-center gap-4 text-center text-xs text-muted-foreground print:hidden">
             <Button onClick={handlePrint} className="w-full sm:w-auto">
               <Printer className="mr-2 h-4 w-4" />
               Print Summary
             </Button>
-            <p className="mt-4">Thank you for choosing Menaharia Medium Clinic.</p>
+             <Button onClick={() => router.push(`/patients/${patient.id}/prescription`)} className="w-full sm:w-auto" variant="outline">
+                <FileText className="mr-2 h-4 w-4" />
+                View Full Prescription
+            </Button>
+            <p className="mt-4 sm:mt-0">Thank you for choosing Menaharia Medium Clinic.</p>
           </footer>
         </div>
       </div>
