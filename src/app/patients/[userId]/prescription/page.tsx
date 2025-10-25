@@ -73,11 +73,18 @@ const PrescriptionPage = () => {
         <>
             <style jsx global>{`
                 @media print {
-                    body {
-                        background-color: #fff !important;
-                        -webkit-print-color-adjust: exact;
+                    body * {
+                        visibility: hidden;
+                    }
+                    .print-container, .print-container * {
+                        visibility: visible;
                     }
                     .print-container {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
                         padding: 0;
                         margin: 0;
                     }
@@ -87,6 +94,7 @@ const PrescriptionPage = () => {
                         margin: 0;
                         width: 100%;
                         height: 100%;
+                        padding: 0.5in; /* Maintain padding for print */
                     }
                     .print-hide {
                         display: none;
@@ -276,5 +284,3 @@ const PrescriptionPage = () => {
 };
 
 export default PrescriptionPage;
-
-    
