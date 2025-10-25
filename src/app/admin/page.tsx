@@ -16,9 +16,15 @@ const AdminPage = () => {
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>(allPatients);
 
   useEffect(() => {
-    const results = allPatients.filter((patient) =>
-      patient.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    const results = allPatients.filter((patient) => {
+      const nameMatch = patient.name.toLowerCase().includes(lowercasedSearchTerm);
+      const ageMatch = patient.age?.toString().includes(lowercasedSearchTerm);
+      const sexMatch = patient.sex?.toLowerCase().includes(lowercasedSearchTerm);
+      const addressMatch = patient.address?.toLowerCase().includes(lowercasedSearchTerm);
+      const phoneMatch = patient.phone?.toLowerCase().includes(lowercasedSearchTerm);
+      return nameMatch || ageMatch || sexMatch || addressMatch || phoneMatch;
+    });
     setFilteredPatients(results);
   }, [searchTerm, allPatients]);
   
@@ -80,8 +86,8 @@ const AdminPage = () => {
                     <div className="mb-4">
                         <input
                             type="text"
-                            placeholder="Search by patient name..."
-                            className="w-full max-w-sm p-2 border rounded-md"
+                            placeholder="Search by name, age, sex, phone, or address..."
+                            className="w-full max-w-lg p-2 border rounded-md"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
