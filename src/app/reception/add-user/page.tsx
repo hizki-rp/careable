@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Image from 'next/image';
 import { usePatientQueue } from '@/context/PatientQueueContext';
 import { useRouter } from 'next/navigation';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type IdSide = 'front' | 'back';
 
@@ -35,6 +38,9 @@ export default function AddUserPage() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [age, setAge] = useState<number | undefined>(undefined);
+  const [sex, setSex] = useState('');
+  const [isUrgent, setIsUrgent] = useState(false);
 
   const [frontIdImage, setFrontIdImage] = useState<string | null>(null);
   const [backIdImage, setBackIdImage] = useState<string | null>(null);
@@ -163,27 +169,38 @@ export default function AddUserPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name) {
+    if (!name || !age || !sex) {
         toast({
             variant: "destructive",
-            title: "Name is required",
-            description: "Please enter the patient's full name.",
+            title: "Missing Information",
+            description: "Please fill out the patient's name, age, and sex.",
         });
         return;
     }
 
-    addPatient({ name, email, phone, address });
+    addPatient({ 
+      name, 
+      email, 
+      phone, 
+      address, 
+      age, 
+      sex, 
+      priority: isUrgent ? 'Urgent' : 'Standard' 
+    });
     
     toast({
         title: "Patient Added",
         description: `${name} has been added to the waiting room queue.`,
     });
 
-    // Optionally clear the form
+    // Clear the form
     setName('');
     setEmail('');
     setPhone('');
     setAddress('');
+    setAge(undefined);
+    setSex('');
+    setIsUrgent(false);
     setFrontIdImage(null);
     setBackIdImage(null);
 
@@ -235,30 +252,60 @@ export default function AddUserPage() {
           
             <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input id="name" placeholder="Enter patient's full name" value={name} onChange={(e) => setName(e.target.value)} required />
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input id="name" placeholder="Enter patient's full name" value={name} onChange={(e) => setName(e.target.value)} required />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="age">Age</Label>
+                        <Input id="age" type="number" placeholder="e.g., 34" value={age || ''} onChange={(e) => setAge(parseInt(e.target.value, 10))} required />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="sex">Sex</Label>
+                        <Select value={sex} onValueChange={setSex} required>
+                            <SelectTrigger id="sex">
+                                <SelectValue placeholder="Select sex" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Male">Male</SelectItem>
+                                <SelectItem value="Female">Female</SelectItem>
+                                <SelectItem value="Other">Other</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
                 <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter patient's email"
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+                    <Label htmlFor="email">Email Address (Optional)</Label>
+                    <Input
+                        id="email"
+                        type="email"
+                        placeholder="Enter patient's email"
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
                 </div>
                 <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" type="tel" placeholder="Enter patient's phone number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                    <Label htmlFor="phone">Phone Number (Optional)</Label>
+                    <Input id="phone" type="tel" placeholder="Enter patient's phone number" value={phone} onChange={(e) => setPhone(e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input id="address" placeholder="Enter patient's address" value={address} onChange={(e) => setAddress(e.target.value)} />
+                    <Label htmlFor="address">Address (Optional)</Label>
+                    <Input id="address" placeholder="Enter patient's address" value={address} onChange={(e) => setAddress(e.target.value)} />
                 </div>
+
+                <div className="flex items-center space-x-2 pt-2">
+                    <Checkbox id="urgent" checked={isUrgent} onCheckedChange={(checked) => setIsUrgent(checked as boolean)} />
+                    <label
+                        htmlFor="urgent"
+                        className="text-sm font-medium leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Mark as URGENT
+                    </label>
+                </div>
+                
                 <Button type="submit" className="w-full">
-                <UserPlus className="mr-2 h-4 w-4" />
-                Create Patient Account
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Create Patient Account
                 </Button>
             </form>
         </CardContent>
@@ -293,3 +340,5 @@ export default function AddUserPage() {
     </main>
   );
 }
+
+    

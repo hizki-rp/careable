@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ArrowRight, User, Stethoscope, Beaker, ClipboardPlus, Printer, Plus, UserCheck, TestTube, LogOut, FileText } from 'lucide-react';
+import { ArrowRight, User, Stethoscope, Beaker, ClipboardPlus, Printer, Plus, UserCheck, TestTube, LogOut, FileText, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import React, { useState, useContext, createContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -26,6 +26,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 
 const STAGES: QueueStage[] = ['Waiting Room', 'Questioning', 'Laboratory Test', 'Results by Doctor'];
 const AVAILABLE_LAB_TESTS = ["Complete Blood Count (CBC)", "Urinalysis", "Blood Glucose", "Lipid Panel", "Liver Function Test"];
@@ -93,7 +94,6 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
   const handleDischarge = () => {
     movePatient(patient.id, 'Discharged', { diagnosis, prescription });
     setDoctorModalOpen(false);
-    // Navigate to the prescription page
     router.push(`/patients/${patient.id}/prescription`);
   }
   
@@ -117,7 +117,6 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
         icon = <Stethoscope className="mr-2 h-4 w-4" />;
         isVisible = role === 'Doctor';
         break;
-
       case 'Laboratory Test':
         text = 'Add Lab Results';
         icon = <TestTube className="mr-2 h-4 w-4" />;
@@ -140,22 +139,27 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
   };
 
   return (
-    <Card className="mb-4 bg-card shadow-md border-l-4 border-primary">
+    <Card className={cn("mb-4 bg-card shadow-md border-l-4", patient.priority === 'Urgent' ? 'border-destructive' : 'border-primary')}>
       <CardContent className="p-4 flex flex-col items-start gap-1">
         <div className="flex items-center justify-between w-full">
             <p className="font-bold text-lg">{patient.name}</p>
-            {patient.stage === 'Results by Doctor' && role === 'Doctor' && (
-                <Button variant="ghost" size="icon" onClick={handlePrint} title="Print Summary">
-                <Printer className="h-5 w-5"/>
-                </Button>
+            {patient.priority === 'Urgent' ? (
+                <div title="Urgent" className="flex items-center gap-1 text-destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <span className="text-xs font-bold">URGENT</span>
+                </div>
+            ) : (
+                <div title="Standard" className="flex items-center gap-1 text-green-500">
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span className="text-xs font-bold">Standard</span>
+                </div>
             )}
         </div>
         <p className="text-sm text-muted-foreground">Checked in at: {patient.checkInTime.toLocaleTimeString()}</p>
-
         
         {getActionButton()}
         
-        {/* Questioning Modal */}
+        {/* Modals */}
         <AlertDialog open={isQuestioningModalOpen} onOpenChange={setQuestioningModalOpen}>
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -184,7 +188,6 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
             </AlertDialogContent>
         </AlertDialog>
 
-        {/* Lab Results Modal */}
         <AlertDialog open={isLabModalOpen} onOpenChange={setLabModalOpen}>
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -213,11 +216,15 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
             </AlertDialogContent>
         </AlertDialog>
         
-        {/* Doctor's Diagnosis Modal */}
         <AlertDialog open={isDoctorModalOpen} onOpenChange={setDoctorModalOpen}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Diagnosis for {patient.name}</AlertDialogTitle>
+                    <div className="flex justify-end">
+                        <Button variant="ghost" size="icon" onClick={handlePrint} title="Print Summary">
+                            <Printer className="h-5 w-5"/>
+                        </Button>
+                    </div>
                 </AlertDialogHeader>
                 <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto pr-2">
                     <div>

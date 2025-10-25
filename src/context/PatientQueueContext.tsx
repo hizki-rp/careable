@@ -1,8 +1,10 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export type QueueStage = 'Waiting Room' | 'Questioning' | 'Laboratory Test' | 'Results by Doctor' | 'Discharged';
+export type PatientPriority = 'Standard' | 'Urgent';
 
 export interface Patient {
   id: string;
@@ -12,8 +14,10 @@ export interface Patient {
   email?: string;
   phone?: string;
   address?: string;
-  
-  // New properties for detailed workflow
+  age?: number;
+  sex?: string;
+  priority: PatientPriority;
+
   requestedLabTests?: string[];
   labResults?: string;
   diagnosis?: string;
@@ -29,7 +33,15 @@ interface PatientDataUpdate {
 
 interface PatientQueueContextType {
   patients: Patient[];
-  addPatient: (patientData: { name: string, email?: string, phone?: string, address?: string }) => void;
+  addPatient: (patientData: { 
+    name: string, 
+    email?: string, 
+    phone?: string, 
+    address?: string, 
+    age?: number, 
+    sex?: string, 
+    priority: PatientPriority 
+  }) => void;
   movePatient: (patientId: string, nextStage: QueueStage, data?: PatientDataUpdate) => void;
   setPatients: React.Dispatch<React.SetStateAction<Patient[]>>;
   getPatientById: (patientId: string) => Patient | undefined;
@@ -37,14 +49,21 @@ interface PatientQueueContextType {
 
 const PatientQueueContext = createContext<PatientQueueContextType | undefined>(undefined);
 
-// In-memory storage for discharged patients to allow for history lookup
 const dischargedPatientHistory: Patient[] = [];
 
 export const PatientQueueProvider = ({ children }: { children: ReactNode }) => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [patientIdCounter, setPatientIdCounter] = useState(1);
 
-  const addPatient = (patientData: { name: string, email?: string, phone?: string, address?: string }) => {
+  const addPatient = (patientData: { 
+    name: string, 
+    email?: string, 
+    phone?: string, 
+    address?: string,
+    age?: number,
+    sex?: string,
+    priority: PatientPriority
+  }) => {
     const newPatient: Patient = {
       ...patientData,
       id: `P-${String(patientIdCounter).padStart(3, '0')}`,
@@ -65,26 +84,22 @@ export const PatientQueueProvider = ({ children }: { children: ReactNode }) => {
                 stage: nextStage,
                 ...data,
             };
-            // By returning null, we prepare to filter this patient out
             return null; 
         }
         return p;
-    }).filter(Boolean) as Patient[]; // Filter out the null entry
+    }).filter(Boolean) as Patient[];
 
     if (patientToMove) {
         if (nextStage === 'Discharged') {
-            // Move to history instead of active queue
             dischargedPatientHistory.push(patientToMove);
-            setPatients(updatedPatients); // Set the state without the discharged patient
+            setPatients(updatedPatients);
         } else {
-            // Add the updated patient back into the active queue
             setPatients([...updatedPatients, { ...patientToMove, checkInTime: new Date() }]);
         }
     }
   };
 
   const getPatientById = (patientId: string): Patient | undefined => {
-    // Search active patients first, then discharged history
     return patients.find(p => p.id === patientId) || dischargedPatientHistory.find(p => p.id === patientId);
   }
 
@@ -102,3 +117,5 @@ export const usePatientQueue = () => {
   }
   return context;
 };
+
+    
