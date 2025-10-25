@@ -1,4 +1,6 @@
+
 import { PlaceHolderImages } from "./placeholder-images";
+import { type Status } from "./types";
 
 export const Doctors = [
   {
@@ -56,3 +58,37 @@ export const PatientFormDefaultValues = {
 };
 
 export const Genders = ["Male", "Female", "Other"];
+
+
+export const appointments = [
+    {
+      patient: { name: 'John Doe', image: PlaceHolderImages.find(p => p.id === 'dr-alcantara')?.imageUrl },
+      schedule: '2024-08-15T10:00:00',
+      status: 'scheduled' as Status,
+      primaryPhysician: 'Dr. Sarah Lee',
+      reason: 'Check-up',
+      note: 'Feeling tired lately.',
+      userId: 'user1',
+      cancellationReason: null,
+    },
+    {
+      patient: { name: 'Jane Smith', image: PlaceHolderImages.find(p => p.id === 'dr-lee')?.imageUrl },
+      schedule: '2024-08-16T11:30:00',
+      status: 'pending' as Status,
+      primaryPhysician: 'Dr. David Williams',
+      reason: 'Sore throat',
+      note: 'Needs a quick check.',
+      userId: 'user2',
+      cancellationReason: null,
+    },
+    {
+      patient: { name: 'Alice Johnson', image: PlaceHolderImages.find(p => p.id === 'dr-williams')?.imageUrl },
+      schedule: '2024-08-17T14:00:00',
+      status: 'cancelled' as Status,
+      primaryPhysician: 'Dr. John Alcantara',
+      reason: 'Follow-up',
+      note: 'Previous test results review.',
+      userId: 'user3',
+      cancellationReason: 'Scheduling conflict.',
+    },
+  ];

@@ -3,11 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Input } from '@/components/ui/input';
 import StatCard from '@/components/StatCard';
 import { usePatientQueue, Patient } from '@/context/PatientQueueContext';
 import PatientDataTable from '@/components/PatientDataTable';
+import AppointmentDataTable from '@/components/AppointmentDataTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { appointments } from '@/lib/constants';
 
 const AdminPage = () => {
   const { allPatients } = usePatientQueue();
@@ -62,25 +63,39 @@ const AdminPage = () => {
           />
           <StatCard
             type="cancelled"
-            count={0}
+            count={appointments.filter(a => a.status === 'cancelled').length}
             label="Cancelled Appointments"
             icon="/assets/icons/cancelled.svg"
           />
         </section>
 
-        <div className="bg-card p-6 rounded-lg shadow-md border">
-          <h2 className="text-xl font-bold mb-4">Patients</h2>
-          <div className="mb-4">
-            <Input
-              type="text"
-              placeholder="Search by patient name..."
-              className="w-full max-w-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <PatientDataTable data={filteredPatients} />
-        </div>
+        <Tabs defaultValue="patients" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 max-w-sm">
+                <TabsTrigger value="patients">Patients</TabsTrigger>
+                <TabsTrigger value="appointments">Appointments</TabsTrigger>
+            </TabsList>
+            <TabsContent value="patients">
+                <div className="bg-card p-6 rounded-lg shadow-md border mt-4">
+                    <h2 className="text-xl font-bold mb-4">Patients</h2>
+                    <div className="mb-4">
+                        <input
+                            type="text"
+                            placeholder="Search by patient name..."
+                            className="w-full max-w-sm p-2 border rounded-md"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <PatientDataTable data={filteredPatients} />
+                </div>
+            </TabsContent>
+            <TabsContent value="appointments">
+                <div className="bg-card p-6 rounded-lg shadow-md border mt-4">
+                    <h2 className="text-xl font-bold mb-4">Recent Appointments</h2>
+                    <AppointmentDataTable data={appointments} />
+                </div>
+            </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
