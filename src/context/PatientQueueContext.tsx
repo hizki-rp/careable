@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useMemo } from 'react';
 
 export type QueueStage = 'Waiting Room' | 'Questioning' | 'Laboratory Test' | 'Results by Doctor' | 'Discharged';
 export type PatientPriority = 'Standard' | 'Urgent';
@@ -33,6 +33,7 @@ interface PatientDataUpdate {
 
 interface PatientQueueContextType {
   patients: Patient[];
+  allPatients: Patient[];
   addPatient: (patientData: { 
     name: string, 
     email?: string, 
@@ -49,10 +50,12 @@ interface PatientQueueContextType {
 
 const PatientQueueContext = createContext<PatientQueueContextType | undefined>(undefined);
 
-const dischargedPatientHistory: Patient[] = [];
+// Keep discharged history at the module level to persist it across re-renders.
+let dischargedPatientHistory: Patient[] = [];
 
 export const PatientQueueProvider = ({ children }: { children: ReactNode }) => {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [dischargedPatients, setDischargedPatients] = useState<Patient[]>(dischargedPatientHistory);
   const [patientIdCounter, setPatientIdCounter] = useState(1);
 
   const addPatient = (patientData: { 
@@ -91,7 +94,8 @@ export const PatientQueueProvider = ({ children }: { children: ReactNode }) => {
 
     if (patientToMove) {
         if (nextStage === 'Discharged') {
-            dischargedPatientHistory.push(patientToMove);
+            dischargedPatientHistory = [patientToMove, ...dischargedPatientHistory];
+            setDischargedPatients(dischargedPatientHistory);
             setPatients(updatedPatients);
         } else {
             setPatients([...updatedPatients, { ...patientToMove, checkInTime: new Date() }]);
@@ -100,11 +104,13 @@ export const PatientQueueProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getPatientById = (patientId: string): Patient | undefined => {
-    return patients.find(p => p.id === patientId) || dischargedPatientHistory.find(p => p.id === patientId);
+    return patients.find(p => p.id === patientId) || dischargedPatients.find(p => p.id === patientId);
   }
 
+  const allPatients = useMemo(() => [...patients, ...dischargedPatients], [patients, dischargedPatients]);
+
   return (
-    <PatientQueueContext.Provider value={{ patients, addPatient, movePatient, setPatients, getPatientById }}>
+    <PatientQueueContext.Provider value={{ patients, addPatient, movePatient, setPatients, getPatientById, allPatients }}>
       {children}
     </PatientQueueContext.Provider>
   );
@@ -117,5 +123,3 @@ export const usePatientQueue = () => {
   }
   return context;
 };
-
-    
