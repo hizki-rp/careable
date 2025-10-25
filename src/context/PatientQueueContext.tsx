@@ -44,6 +44,7 @@ interface PatientQueueContextType {
     priority: PatientPriority 
   }) => void;
   movePatient: (patientId: string, nextStage: QueueStage, data?: PatientDataUpdate) => void;
+  reAdmitPatient: (patientId: string) => void;
   setPatients: React.Dispatch<React.SetStateAction<Patient[]>>;
   getPatientById: (patientId: string) => Patient | undefined;
 }
@@ -103,6 +104,30 @@ export const PatientQueueProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const reAdmitPatient = (patientId: string) => {
+    const patientToReAdmit = dischargedPatients.find(p => p.id === patientId);
+    if (patientToReAdmit) {
+      // Remove from discharged
+      const newDischargedHistory = dischargedPatients.filter(p => p.id !== patientId);
+      dischargedPatientHistory = newDischargedHistory;
+      setDischargedPatients(newDischargedHistory);
+
+      // Reset and add to active queue
+      const newVisitPatient: Patient = {
+        ...patientToReAdmit,
+        stage: 'Waiting Room',
+        checkInTime: new Date(),
+        // Clear data from previous visit
+        requestedLabTests: undefined,
+        labResults: undefined,
+        diagnosis: undefined,
+        prescription: undefined,
+      };
+      setPatients(prev => [...prev, newVisitPatient]);
+    }
+  };
+
+
   const getPatientById = (patientId: string): Patient | undefined => {
     return patients.find(p => p.id === patientId) || dischargedPatients.find(p => p.id === patientId);
   }
@@ -110,7 +135,7 @@ export const PatientQueueProvider = ({ children }: { children: ReactNode }) => {
   const allPatients = useMemo(() => [...patients, ...dischargedPatients], [patients, dischargedPatients]);
 
   return (
-    <PatientQueueContext.Provider value={{ patients, addPatient, movePatient, setPatients, getPatientById, allPatients }}>
+    <PatientQueueContext.Provider value={{ patients, addPatient, movePatient, setPatients, getPatientById, allPatients, reAdmitPatient }}>
       {children}
     </PatientQueueContext.Provider>
   );
