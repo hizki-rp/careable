@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ArrowRight, User, Stethoscope, Beaker, ClipboardPlus, Printer, Plus, UserCheck, TestTube, LogOut, FileText, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import React, { useState, useContext, createContext } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { usePatientQueue, type Patient, type QueueStage } from '@/context/PatientQueueContext';
@@ -25,32 +25,15 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { useRouter } from 'next/navigation';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
 
 const STAGES: QueueStage[] = ['Waiting Room', 'Questioning', 'Laboratory Test', 'Results by Doctor'];
 const AVAILABLE_LAB_TESTS = ["Complete Blood Count (CBC)", "Urinalysis", "Blood Glucose", "Lipid Panel", "Liver Function Test"];
 
-type Role = 'Receptionist' | 'Doctor' | 'Laboratorian';
-
-interface RoleContextType {
-    role: Role;
-    setRole: (role: Role) => void;
-}
-
-const RoleContext = createContext<RoleContextType | undefined>(undefined);
-
-const useRole = () => {
-    const context = useContext(RoleContext);
-    if (!context) {
-        throw new Error('useRole must be used within a RoleProvider');
-    }
-    return context;
-}
-
 const PatientCard = ({ patient }: { patient: Patient }) => {
   const { movePatient } = usePatientQueue();
-  const { role } = useRole();
+  const { user } = useAuth();
   const [isQuestioningModalOpen, setQuestioningModalOpen] = useState(false);
   const [isLabModalOpen, setLabModalOpen] = useState(false);
   const [isDoctorModalOpen, setDoctorModalOpen] = useState(false);
@@ -61,20 +44,22 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
   const [prescription, setPrescription] = useState('');
   const router = useRouter();
 
+  // Get role from user, capitalize first letter for comparison
+  const userRole = user?.role;
 
   const handleTestAction = () => {
     switch (patient.stage) {
       case 'Waiting Room':
-        if(role === 'Receptionist') movePatient(patient.id, 'Questioning');
+        if(userRole === 'receptionist') movePatient(patient.id, 'Questioning');
         break;
       case 'Questioning':
-        if(role === 'Doctor') setQuestioningModalOpen(true);
+        if(userRole === 'doctor') setQuestioningModalOpen(true);
         break;
       case 'Laboratory Test':
-        if(role === 'Laboratorian') setLabModalOpen(true);
+        if(userRole === 'laboratorian') setLabModalOpen(true);
         break;
       case 'Results by Doctor':
-        if(role === 'Doctor') setDoctorModalOpen(true);
+        if(userRole === 'doctor') setDoctorModalOpen(true);
         break;
     }
   };
@@ -96,7 +81,7 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
     setDoctorModalOpen(false);
     router.push(`/patients/${patient.id}/prescription`);
   }
-  
+
   const handlePrint = () => {
     router.push(`/patients/${patient.id}/summary`);
   }
@@ -110,22 +95,22 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
       case 'Waiting Room':
         text = 'Start Questioning';
         icon = <UserCheck className="mr-2 h-4 w-4" />
-        isVisible = role === 'Receptionist';
+        isVisible = userRole === 'receptionist';
         break;
       case 'Questioning':
         text = 'Assign Lab Tests';
         icon = <Stethoscope className="mr-2 h-4 w-4" />;
-        isVisible = role === 'Doctor';
+        isVisible = userRole === 'doctor';
         break;
       case 'Laboratory Test':
         text = 'Add Lab Results';
         icon = <TestTube className="mr-2 h-4 w-4" />;
-        isVisible = role === 'Laboratorian';
+        isVisible = userRole === 'laboratorian';
         break;
       case 'Results by Doctor':
         text = 'Diagnose & Discharge';
         icon = <LogOut className="mr-2 h-4 w-4" />;
-        isVisible = role === 'Doctor';
+        isVisible = userRole === 'doctor';
         break;
     }
 
@@ -156,9 +141,9 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
             )}
         </div>
         <p className="text-sm text-muted-foreground">Checked in at: {patient.checkInTime.toLocaleTimeString()}</p>
-        
+
         {getActionButton()}
-        
+
         {/* Modals */}
         <AlertDialog open={isQuestioningModalOpen} onOpenChange={setQuestioningModalOpen}>
             <AlertDialogContent>
@@ -169,7 +154,7 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
                 <div className="space-y-4 py-4">
                     {AVAILABLE_LAB_TESTS.map(test => (
                         <div key={test} className="flex items-center space-x-2">
-                            <Checkbox 
+                            <Checkbox
                                 id={`test-${patient.id}-${test}`}
                                 onCheckedChange={(checked) => {
                                     setSelectedTests(prev => checked ? [...prev, test] : prev.filter(t => t !== test))
@@ -201,9 +186,9 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
                         </ul>
                     </div>
                     <Label htmlFor="lab-results">Test Results</Label>
-                    <Textarea 
-                        id="lab-results" 
-                        value={labResults} 
+                    <Textarea
+                        id="lab-results"
+                        value={labResults}
                         onChange={e => setLabResults(e.target.value)}
                         placeholder="Enter summary of lab findings..."
                         className="min-h-[150px]"
@@ -215,7 +200,7 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-        
+
         <AlertDialog open={isDoctorModalOpen} onOpenChange={setDoctorModalOpen}>
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -233,8 +218,8 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="diagnosis">Diagnosis</Label>
-                        <Textarea 
-                            id="diagnosis" 
+                        <Textarea
+                            id="diagnosis"
                             value={diagnosis}
                             onChange={e => setDiagnosis(e.target.value)}
                             placeholder="Enter final diagnosis..."
@@ -242,8 +227,8 @@ const PatientCard = ({ patient }: { patient: Patient }) => {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="prescription">Prescription</Label>
-                        <Textarea 
-                            id="prescription" 
+                        <Textarea
+                            id="prescription"
                             value={prescription}
                             onChange={e => setPrescription(e.target.value)}
                             placeholder="e.g., Amoxicillin 500mg, 3 times a day for 7 days"
@@ -283,37 +268,10 @@ const QueueColumn = ({ title, patients, color }: { title: string; patients: Pati
   );
 };
 
-const RoleProvider = ({ children }: { children: React.ReactNode }) => {
-    const [role, setRole] = useState<Role>('Receptionist');
-    return (
-        <RoleContext.Provider value={{ role, setRole }}>
-            {children}
-        </RoleContext.Provider>
-    )
-}
-
-const RoleSwitcher = () => {
-    const { role, setRole } = useRole();
-    return (
-        <div className="flex items-center gap-2">
-            <Label htmlFor="role-switcher" className="text-sm">Role:</Label>
-            <Select value={role} onValueChange={(value) => setRole(value as Role)}>
-                <SelectTrigger id="role-switcher" className="w-[180px] bg-card">
-                    <SelectValue placeholder="Select a role" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="Receptionist">Receptionist</SelectItem>
-                    <SelectItem value="Doctor">Doctor</SelectItem>
-                    <SelectItem value="Laboratorian">Laboratorian</SelectItem>
-                </SelectContent>
-            </Select>
-        </div>
-    )
-}
-
 
 export default function ClinicQueueManager() {
   const { patients } = usePatientQueue();
+  const { user } = useAuth();
   const router = useRouter();
 
   const columnColors = {
@@ -324,36 +282,39 @@ export default function ClinicQueueManager() {
   }
 
   return (
-    <RoleProvider>
-        <main className="p-4 md:p-6 lg:p-8 flex flex-col bg-background">
-        <header className="mb-6 flex flex-wrap gap-4 justify-between items-center">
-            <div>
-                <h1 className="text-3xl font-extrabold">Clinic Queue Manager</h1>
-                <p className="text-lg text-muted-foreground">
-                    Real-time patient flow management.
-                </p>
-            </div>
-            <div className="flex items-center gap-4">
-                <RoleSwitcher />
-                <Button onClick={() => router.push('/reception/add-user')}>
-                    <Plus className="mr-2 h-4 w-4"/> Add Patient
-                </Button>
-            </div>
-        </header>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-            {STAGES.map((stage) => (
-            <QueueColumn
-                key={stage}
-                title={stage}
-                patients={patients.filter(p => p.stage === stage)}
-                color={columnColors[stage]}
-            />
-            ))}
+    <main className="p-4 md:p-6 lg:p-8 flex flex-col bg-background">
+      <header className="mb-6 flex flex-wrap gap-4 justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-extrabold">Clinic Queue Manager</h1>
+          <p className="text-lg text-muted-foreground">
+            Real-time patient flow management.
+          </p>
         </div>
-        </main>
-    </RoleProvider>
+        <div className="flex items-center gap-4">
+          {user && (
+            <div className="text-sm text-right">
+              <p className="font-semibold text-foreground">{user.fullName}</p>
+              <p className="text-muted-foreground capitalize">{user.role}</p>
+            </div>
+          )}
+          <Button onClick={() => router.push('/reception/add-user')}>
+            <Plus className="mr-2 h-4 w-4"/> Add Patient
+          </Button>
+        </div>
+      </header>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        {STAGES.map((stage) => (
+          <QueueColumn
+            key={stage}
+            title={stage}
+            patients={patients.filter(p => p.stage === stage)}
+            color={columnColors[stage]}
+          />
+        ))}
+      </div>
+    </main>
   );
 }
 
-    
+
