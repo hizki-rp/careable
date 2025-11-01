@@ -2,17 +2,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import PatientForm from "@/components/forms/PatientForm";
-import PasskeyModal from "@/components/PasskeyModal";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Button } from "@/components/ui/button";
 
-export default function Home({ searchParams }: { searchParams: { admin?: string }}) {
-  const isAdmin = searchParams?.admin === 'true';
+export default function Home() {
   const onboardingImage = PlaceHolderImages.find(img => img.id === 'onboarding-img');
 
   return (
     <div className="flex h-screen max-h-screen">
-      {isAdmin && <PasskeyModal />}
       <section className="remove-scrollbar container">
         <div className="sub-container max-w-full">
           <section className="mb-12 flex items-center gap-x-8">
