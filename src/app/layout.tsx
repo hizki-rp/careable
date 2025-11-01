@@ -39,7 +39,8 @@ export default function RootLayout({
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <PatientQueueProvider>
+          <AuthProvider>
+            <PatientQueueProvider>
             <SidebarProvider>
               <Sidebar>
                   <SidebarContent className="flex flex-col">
