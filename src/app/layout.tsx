@@ -66,7 +66,8 @@ export default function RootLayout({
               </SidebarInset>
             </SidebarProvider>
             <Toaster />
-          </PatientQueueProvider>
+            </PatientQueueProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
