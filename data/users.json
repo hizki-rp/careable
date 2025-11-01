@@ -1,0 +1,34 @@
+[
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "username": "admin",
+    "password": "$2b$10$5R1TpFGYc/ibg1T4fLqKueyKxLWnLjZVIxB/J9gPV5Ee4bI/LqM9u",
+    "role": "admin",
+    "fullName": "System Administrator",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "username": "receptionist",
+    "password": "$2b$10$5R1TpFGYc/ibg1T4fLqKueyKxLWnLjZVIxB/J9gPV5Ee4bI/LqM9u",
+    "role": "receptionist",
+    "fullName": "Reception Staff",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "username": "doctor",
+    "password": "$2b$10$5R1TpFGYc/ibg1T4fLqKueyKxLWnLjZVIxB/J9gPV5Ee4bI/LqM9u",
+    "role": "doctor",
+    "fullName": "Dr. Smith",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440003",
+    "username": "lab",
+    "password": "$2b$10$5R1TpFGYc/ibg1T4fLqKueyKxLWnLjZVIxB/J9gPV5Ee4bI/LqM9u",
+    "role": "laboratorian",
+    "fullName": "Lab Technician",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  }
+]
