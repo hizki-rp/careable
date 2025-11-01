@@ -50,8 +50,8 @@ export default function Home() {
 
           <div className="text-14-regular mt-20 flex justify-between">
             <p className="copyright">© 2024 Menaharia Medium Clinic</p>
-            <Link href="/?admin=true" className="text-primary hover:underline">
-              Admin
+            <Link href="/login" className="text-primary hover:underline">
+              Staff Login
             </Link>
           </div>
         </div>
