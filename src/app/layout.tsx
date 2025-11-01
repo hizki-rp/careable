@@ -47,14 +47,16 @@ export default function RootLayout({
                     <header className="p-4 flex items-center gap-2">
                       <Link href="/" className="font-bold text-xl text-primary">Menaharia Medium Clinic</Link>
                     </header>
-                    <nav className="flex flex-col gap-2 p-4">
+                    <nav className="flex flex-col gap-2 p-4 flex-1">
                       <Link href="/" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><Home size={20} /><span>Home</span></Link>
-                      <Link href="/?admin=true" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><User size={20} /><span>Admin Login</span></Link>
                       <Link href="/admin" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><LayoutDashboard size={20} /><span>Admin Dashboard</span></Link>
                       <Link href="/patients/user1/register" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><UserPlus size={20} /><span>Register</span></Link>
                       <Link href="/reception/add-user" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><UserPlus size={20} /><span>Add Patient</span></Link>
                       <Link href="/reception/queue" className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors"><ListOrdered size={20} /><span>Patient Queue</span></Link>
                     </nav>
+                    <div className="border-t p-4">
+                      <LogoutButton />
+                    </div>
                   </SidebarContent>
               </Sidebar>
               <SidebarInset>
